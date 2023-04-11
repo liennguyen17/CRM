@@ -12,6 +12,5 @@ public class UpdateRoleRequest {
     private String roleName;
     @NotNull(message = "Trạng thái vai trò không được để trống nhập(1: Hoạt động, 0: Không hoạt động)")
     private Boolean status;
-
     private List<String> permissionIds;
 }

@@ -25,6 +25,6 @@ public class CreateUserRequest {
     private String address;
     @NotNull(message = "Người dùng có chỉ định là Admin không được để trống nhập(1: có, 0: không)")
     private Boolean isSuperAdmin;
-    @NotNull(message = "Role_id không được để trống")
+//    @NotNull(message = "Role_id không được để trống")
     private Long roleId;
 }

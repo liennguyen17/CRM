@@ -1,13 +1,16 @@
 package com.example.democrm.etity;
 
+import com.example.democrm.constant.RoleEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.Set;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.*;
 
 @Entity
 @Table(name = "user")
@@ -45,6 +48,20 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
+
+    //tra ve danh sach doi tuong GrantedAuthority cho nguoi dung dang duoc xac thuc
+    public Collection<? extends GrantedAuthority> getAuthorities(){
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        //kt quyen duoc phan
+        if(role != null){
+            role.getPermissions().forEach(permission -> authorities.add(new SimpleGrantedAuthority(permission.getPermissionId())));
+        }
+        //cho phep quyen admin, neu nguoi dung duoc xac thuc la mot isSuperAdmin ta them quyen ADMIN vao danh sach authorities
+        if(isSuperAdmin){
+            authorities.add(new SimpleGrantedAuthority(RoleEnum.ADMIN.name()));
+        }
+        return authorities;
+    }
 
 
 }

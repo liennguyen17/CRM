@@ -70,6 +70,14 @@ public class RoleController extends BaseController {
         }
     }
 
+    //xem lai khi van xoa duoc nhung van nhay vao loi _ tinh sua lai nhu sau
+    /*
+    @DeleteMapping("/{id}")
+    ResponseEntity<?> deleteById(@PathVariable Long id) {
+    RoleDTO response = roleService.deleteById(id);
+            return buildItemResponse(response);
+        }
+     */
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteById(@PathVariable Long id) {
         try {

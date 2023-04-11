@@ -81,6 +81,8 @@ public class RoleServiceImpl implements RoleService {
         throw new RuntimeException("Có lỗi xảy ra trong quá trình cập nhật thông tin người dùng");
     }
 
+
+    //xem lai phan xoa
     @Override
     public RoleDTO deleteById(Long id) {
         Optional<Role> roleOptional = roleRepository.findById(id);

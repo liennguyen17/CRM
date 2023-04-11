@@ -17,6 +17,9 @@ public class CustomUserRepository {
                                                           FilterUserRequest request) {
         return (((root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+            //always not list superadmin for api
+            // luôn không liệt kê Superadmin cho API
+            predicates.add(criteriaBuilder.equal(root.get("isSuperAdmin"), false)); //xem co anh huong gi den viec tim kiem theo isSuperAdmin ko
             if (dateFrom != null && dateTo != null) {
                 predicates.add(criteriaBuilder.between(root.get("date"), dateFrom, dateTo));
             }

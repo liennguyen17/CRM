@@ -24,6 +24,6 @@ public class UpdateUserRequest {
     private String address;
     @NotNull(message = "Nhập người dùng có chỉ định là Admin hay không(1: có, 0: không)")
     private Boolean isSuperAdmin;
-    @NotNull(message = "Role_id không được để trống")
+//    @NotNull(message = "Role_id không được để trống")
     private Long roleId;
 }

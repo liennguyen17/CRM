@@ -32,9 +32,9 @@ public class CustomUserRepository {
             if (StringUtils.hasText(request.getAddress())) {
                 predicates.add(criteriaBuilder.like(root.get("address"), request.getAddress()));
             }
-            if (request.getIsSuperAdmin() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("isSuperAdmin"), request.getIsSuperAdmin()));
-            }
+//            if (request.getIsSuperAdmin() != null) {
+//                predicates.add(criteriaBuilder.equal(root.get("isSuperAdmin"), request.getIsSuperAdmin()));
+//            }
             if (request.getRoleId() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("role"), request.getRoleId()));
             }

@@ -14,5 +14,5 @@ public class LoginResponse {
     private Long id;
     private String userName;
     private String email;
-    private List<String> roles;
+    private List<String> roles;//quyền trong vai trò(với vai trò a được phân thì sẽ hiển thị lên danh sách các quyền)
 }

@@ -8,6 +8,7 @@ import com.example.democrm.request.permission.CreatePermissionRequest;
 import com.example.democrm.request.permission.FilterPermissionRequest;
 import com.example.democrm.request.permission.UpdatePermissionRequest;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,6 +24,7 @@ public class PermissionServiceImpl implements PermissionService {
     private final PermissionRepository permissionRepository;
     private final ModelMapper modelMapper = new ModelMapper();
 
+    @Autowired
     public PermissionServiceImpl(PermissionRepository permissionRepository) {
         this.permissionRepository = permissionRepository;
     }

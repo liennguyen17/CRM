@@ -10,10 +10,12 @@ import com.example.democrm.request.role.CreateRoleRequest;
 import com.example.democrm.request.role.FilterRoleRequest;
 import com.example.democrm.request.role.UpdateRoleRequest;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class RoleServiceImpl implements RoleService {
     private final PermissionRepository permissionRepository;
     private final ModelMapper modelMapper = new ModelMapper();
 
+    @Autowired
     public RoleServiceImpl(RoleRepository roleRepository, PermissionRepository permissionRepository) {
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
@@ -53,6 +56,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public RoleDTO createRole(CreateRoleRequest request) {
+        checkPermissionIsValid(request.getPermissionIds());
         Role role = Role.builder()
                 .roleName(request.getRoleName())
                 .createdDate(new Timestamp(System.currentTimeMillis()))
@@ -68,6 +72,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public RoleDTO update(UpdateRoleRequest request, Long id) {
+        checkPermissionIsValid(request.getPermissionIds());
+        validateRoleExist(request.getRoleId());
         Optional<Role> roleOptional = roleRepository.findById(id);
         if (roleOptional.isPresent()) {
             List<Permission> permissions = buildPermission(request.getPermissionIds());
@@ -82,7 +88,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
 
-    //xem lai phan xoa
+    //xem lai phan xoa vi no se ko map duoc doi tuong chua colection , sua lai nhu file demoCRM tra ve true false
     @Override
     public RoleDTO deleteById(Long id) {
         Optional<Role> roleOptional = roleRepository.findById(id);
@@ -113,5 +119,23 @@ public class RoleServiceImpl implements RoleService {
 
     private List<Permission> buildPermission(List<String> permissionIds) {
         return permissionRepository.findAllById(permissionIds);
+    }
+
+    // ---------
+    private void checkPermissionIsValid(List<String> permissionIds) {
+        List<Permission> permissions = buildPermission(permissionIds);
+        if (CollectionUtils.isEmpty(permissions)) {
+            throw new RuntimeException("Permission không tồn tại");
+        }
+        List<String> listIdExists = permissions.stream().map(Permission::getPermissionId).collect(Collectors.toList());
+        List<String> idNotExists = permissionIds.stream().filter(s -> !listIdExists.contains(s)).collect(Collectors.toList());
+        if (!idNotExists.isEmpty())
+            throw new RuntimeException(String.format("Trong danh sách permision ids có mã không tồn tại trên hệ thống: %s", idNotExists));
+    }
+
+    private void validateRoleExist(Long id) {
+        boolean isExist = roleRepository.existsById(id);
+        if (!isExist)
+            throw new RuntimeException("Vai trò không tồn tại trên hệ thống");
     }
 }

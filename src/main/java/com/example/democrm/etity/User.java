@@ -50,15 +50,18 @@ public class User {
     private Role role;
 
     //tra ve danh sach doi tuong GrantedAuthority cho nguoi dung dang duoc xac thuc
-    public Collection<? extends GrantedAuthority> getAuthorities(){
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         //kt quyen duoc phan
-        if(role != null){
+        if (role != null) {
             role.getPermissions().forEach(permission -> authorities.add(new SimpleGrantedAuthority(permission.getPermissionId())));
         }
         //cho phep quyen admin, neu nguoi dung duoc xac thuc la mot isSuperAdmin ta them quyen ADMIN vao danh sach authorities
-        if(isSuperAdmin){
+        if (isSuperAdmin) {
             authorities.add(new SimpleGrantedAuthority(RoleEnum.ADMIN.name()));
+        }
+        if(!isSuperAdmin){
+            authorities.add(new SimpleGrantedAuthority(RoleEnum.STAFF.name()));
         }
         return authorities;
     }

@@ -16,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -30,12 +32,14 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder encoder;
     private final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.encoder = encoder;
     }
 
     @Override
@@ -58,16 +62,18 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO createUser(CreateUserRequest request) throws ParseException {
+        checkUserIsExistByName(request.getUserName(), null);
+        checkRoleIsValid(request.getRoleId());
         Optional<Role> roleOptional = roleRepository.findById(request.getRoleId());
         User user = User.builder()
                 .userName(request.getUserName())
                 .date(MyUtils.convertDateFromString(request.getDate(), DateTimeConstant.DATE_FORMAT))
                 .email(request.getEmail())
-                .password(request.getPassword())
+                .password(encoder.encode(request.getPassword()))
                 .address(request.getAddress())
-                .isSuperAdmin(request.getIsSuperAdmin())
+                .isSuperAdmin(false)
                 .build();
-        user.setRole(roleOptional.get());
+        user.setRole(buildRole(roleOptional.get().getRoleId()));    //lay ra id cua role_sau r se thu xem get dc name ko
         user = userRepository.saveAndFlush(user);
         return modelMapper.map(user, UserDTO.class);
     }
@@ -75,6 +81,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO update(UpdateUserRequest request, Long id) throws ParseException {
+        checkUserIsExistByName(request.getUserName(), request.getId());
+        checkRoleIsValid(request.getRoleId());
+        validateUserExist(request.getId());
         Optional<User> userOptional = userRepository.findById(id);
         Optional<Role> roleOptional = roleRepository.findById(request.getRoleId());
         if (userOptional.isPresent()) {
@@ -82,10 +91,10 @@ public class UserServiceImpl implements UserService {
             user.setUserName(request.getUserName());
             user.setDate(MyUtils.convertDateFromString(request.getDate(), DateTimeConstant.DATE_FORMAT));
             user.setEmail(request.getEmail());
-            user.setPassword(request.getPassword());
+            user.setPassword(encoder.encode(request.getPassword()));
             user.setAddress(request.getAddress());
-            user.setIsSuperAdmin(request.getIsSuperAdmin());
-            user.setRole(roleOptional.get());
+//            user.setIsSuperAdmin(request.getIsSuperAdmin());
+            user.setRole(buildRole(roleOptional.get().getRoleId()));
             return modelMapper.map(userRepository.save(user), UserDTO.class);
         }
         throw new RuntimeException("Có lỗi xảy ra trong quá trình cập nhật thông tin người dùng");
@@ -119,5 +128,37 @@ public class UserServiceImpl implements UserService {
         Specification<User> specification = CustomUserRepository.filterSpecification(dateFrom, dateTo, request);
         Page<User> userPage = userRepository.findAll(specification, PageRequest.of(request.getStart(), request.getLimit()));
         return userPage;
+    }
+
+
+    private void checkUserIsExistByName(String name, Long id) {
+        if (id == null && userRepository.existsAllByUserName(name))
+            throw new RuntimeException("Tên đăng nhập đã tồn tại");
+        if (id != null && userRepository.existsAllByUserNameAndUserIdNot(name, id))
+            throw new RuntimeException("Tên đăng nhập đã tồn tại");
+    }
+
+    private void validateUserExist(Long id) {
+        boolean isExist = userRepository.existsById(id);
+        if (!isExist) {
+            throw new RuntimeException("Người dùng không tồn tại trên hệ thống");
+        }
+    }
+
+    private List<Role> buildRole(List<Long> roleIds) {
+        return CollectionUtils.isEmpty(roleIds) ? new ArrayList<>() : roleRepository.findAllById(roleIds);
+    }
+
+    private void checkRoleIsValid(Long roleId) {
+        if (roleId == null)
+            return;
+        Role role = buildRole(roleId);
+        if (role == null) {
+            throw new RuntimeException("Role không tồn tại");
+        }
+    }
+
+    private Role buildRole(Long roleId) {
+        return roleRepository.findById(roleId).orElseThrow(() -> new RuntimeException("Role không tồn tại"));
     }
 }

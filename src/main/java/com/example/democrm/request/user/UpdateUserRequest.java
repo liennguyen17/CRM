@@ -9,6 +9,8 @@ import lombok.Data;
 
 @Data
 public class UpdateUserRequest {
+    @NotNull(message = "Id không được để trống")
+    private Long id;
     @NotBlank(message = "Tên nguời dùng không được để trống")
     @Size(min = 6, max = 100, message = "Tên phải có ít nhất 6, nhiều nhất 100 kí tự!")
     private String userName;
@@ -24,6 +26,6 @@ public class UpdateUserRequest {
     private String address;
     @NotNull(message = "Nhập người dùng có chỉ định là Admin hay không(1: có, 0: không)")
     private Boolean isSuperAdmin;
-//    @NotNull(message = "Role_id không được để trống")
+    //    @NotNull(message = "Role_id không được để trống")
     private Long roleId;
 }

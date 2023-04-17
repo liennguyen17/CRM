@@ -14,8 +14,8 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UserDetailsImpl implements UserDetails {
-    private static final long serialVersionUID = 1L;
+public class UserDetailsImpl implements UserDetails {   //sd truy xuat thong tin nguoi dung
+    private static final long serialVersionUID = 1L; //ghi nhớ các phiên bản của một Serializable class
     private Long id;
     private String userName;
     private String email;
@@ -23,38 +23,39 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
     private Boolean isSuperAdmin = false;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
     }
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return userName;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

@@ -19,24 +19,25 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class JwtTokenProvider {
+public class JwtTokenProvider { //tạo, validate và lấy thông tin từ JWT
     @Value("${jwt.jwtSecret}")
     private String jwtSecret;
     @Value("${jwt.jwtExpirationMs}")
     private Long jwtExpirationMs;
     @Value("${jwt.jwtRefreshExpirationMs}")
     private Long refreshTokenDurationsMs;
-    private  static final String AUTHORITIES_KEY = "AUTHOR";
+    private static final String AUTHORITIES_KEY = "XAUTHOR";
+
 
     //ma hoa jwtsecret
     @PostConstruct
-    public void init(){
+    public void init() {
         jwtSecret = Base64.getEncoder().encodeToString(jwtSecret.getBytes());
         log.info("jwt secret: {}", jwtSecret);
     }
 
     //gen token ung voi quyen
-    public String generateTokenWithAuthorities(Authentication authentication){
+    public String generateTokenWithAuthorities(Authentication authentication) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs); //ngay het han
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();//getPrincipal(): Trả về người dùng được xác thực
@@ -53,34 +54,34 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public UsernamePasswordAuthenticationToken getUserInfoFromJWT(String token){        //giải mã JWT và trích xuất thông tin người dùng từ JWT.
+    public UsernamePasswordAuthenticationToken getUserInfoFromJWT(String token) {        //giải mã JWT và trích xuất thông tin người dùng từ JWT.
         Claims claims = Jwts.parser()   //Jwts.parser() : tao doi tuong de giai ma jwt
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)  //giải mã JWT và lấy ra đối tượng Claims chứa thông tin người dùng.
                 .getBody();
-        if(claims.get(AUTHORITIES_KEY) != null && claims.get(AUTHORITIES_KEY) instanceof String authoritiesStr && !Strings.isBlank(authoritiesStr)){
+        if (claims.get(AUTHORITIES_KEY) != null && claims.get(AUTHORITIES_KEY) instanceof String authoritiesStr && !Strings.isBlank(authoritiesStr)) {
             Collection authorities = Arrays.stream(authoritiesStr.split(","))
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
             return new UsernamePasswordAuthenticationToken(claims.getSubject(), "", authorities);
         } else {
-            return new UsernamePasswordAuthenticationToken(claims.getSubject(),"", new ArrayList<>());
+            return new UsernamePasswordAuthenticationToken(claims.getSubject(), "", new ArrayList<>());
         }
     }
 
-    public boolean validateJwtToken(String authToken){  //xac thuc jwttoken
-        try{
+    public boolean validateJwtToken(String authToken) {  //xac thuc jwttoken xem co hop le ko va tra ve loi
+        try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
-        }catch (SignatureException e){
+        } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
-        }catch (MalformedJwtException e){
+        } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());
-        }catch (ExpiredJwtException e){
-            log.error("JWT token is expired: {}",e.getMessage());
-        }catch (UnsupportedJwtException e){
+        } catch (ExpiredJwtException e) {
+            log.error("JWT token is expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
             log.error("JWT token is unsupported: {}", e.getMessage());
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty: {}", e.getMessage());
         }
         throw new JwtTokenInvalid(ErrorCodeDefs.getErrMsg(ErrorCodeDefs.TOKEN_INVALID));

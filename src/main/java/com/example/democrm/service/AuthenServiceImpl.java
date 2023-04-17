@@ -6,23 +6,27 @@ import com.example.democrm.repository.RoleRepository;
 import com.example.democrm.repository.UserRepository;
 import com.example.democrm.response.LoginResponse;
 import jakarta.validation.constraints.Email;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AuthenServiceImpl implements AuthenService{
-    private final AuthenticationManager authenticationManager;
+@Service
+public class AuthenServiceImpl implements AuthenService {
+    private final AuthenticationManager authenticationManager;  //quản lý quá trình xác thực người dùng
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Autowired
     public AuthenServiceImpl(AuthenticationManager authenticationManager,
                              UserRepository userRepository,
                              RoleRepository roleRepository,
@@ -59,11 +63,11 @@ public class AuthenServiceImpl implements AuthenService{
     }
 
     @Override
-    public void registerUser(String userName, String password, String email) {
-        if(userRepository.existsAllByUserName(userName)){
+    public void registerUser(String userName, String password, String email, boolean isSuperAdmin) {
+        if (userRepository.existsAllByUserName(userName)) {
             throw new RuntimeException("Tài khoản đã tồn tại");
         }
-        if(userRepository.existsAllByEmail(email)){
+        if (userRepository.existsAllByEmail(email)) {
             throw new RuntimeException("Email đã tồn tại trong hệ thống!");
         }
 
@@ -71,6 +75,7 @@ public class AuthenServiceImpl implements AuthenService{
         User user = User.builder()
                 .userName(userName)
                 .email(email)
+                .isSuperAdmin(false)
                 .password(passwordEncoder.encode(password))
                 .build();
 

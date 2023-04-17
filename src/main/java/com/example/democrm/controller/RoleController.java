@@ -12,6 +12,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,7 @@ public class RoleController extends BaseController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     ResponseEntity<?> getAllRole() {
         try {
             List<RoleDTO> response = roleService.getAll();
@@ -40,7 +42,8 @@ public class RoleController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<?> getById(@PathVariable Long id) throws Exception {
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    ResponseEntity<?> getById(@PathVariable("id") Long id) throws Exception {
         try {
             RoleDTO response = roleService.getById(id);
             return buildItemResponse(response);
@@ -50,6 +53,7 @@ public class RoleController extends BaseController {
     }
 
     @PostMapping("")
+    @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_ROLE')")
     ResponseEntity<?> creatRole(@Validated @RequestBody CreateRoleRequest request) {
         try {
             RoleDTO response = roleService.createRole(request);
@@ -60,6 +64,7 @@ public class RoleController extends BaseController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_ROLE')")
     ResponseEntity<?> update(@Validated @RequestBody UpdateRoleRequest request,
                              @PathVariable("id") Long id) {
         try {
@@ -71,6 +76,7 @@ public class RoleController extends BaseController {
     }
 
     //xem lai khi van xoa duoc nhung van nhay vao loi _ tinh sua lai nhu sau
+    //xem lai phan xoa vi no se ko map duoc doi tuong chua colection , sua lai nhu file demoCRM tra ve true false
     /*
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteById(@PathVariable Long id) {
@@ -79,7 +85,8 @@ public class RoleController extends BaseController {
         }
      */
     @DeleteMapping("/{id}")
-    ResponseEntity<?> deleteById(@PathVariable Long id) {
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DELETE_ROLE')")
+    ResponseEntity<?> deleteById(@PathVariable("id") Long id) {
         try {
             RoleDTO response = roleService.deleteById(id);
             return buildItemResponse(response);
@@ -89,12 +96,14 @@ public class RoleController extends BaseController {
     }
 
     @DeleteMapping("/delete/all")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_ROLE')")
     ResponseEntity<?> deleteAllId(@RequestBody List<Long> ids) {
         List<RoleDTO> response = roleService.deleteAllId(ids);
         return buildListItemResponse(response, response.size());
     }
 
     @PostMapping("/filter")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     ResponseEntity<?> filterRole(@Validated @RequestBody FilterRoleRequest request) throws ParseException {
         Page<Role> rolePage = roleService.filterRole(
                 request,

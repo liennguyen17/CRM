@@ -2,6 +2,7 @@ package com.example.democrm.exception;
 
 import com.example.democrm.constant.ErrorCodeDefs;
 import com.example.democrm.response.BaseResponse;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.nio.file.AccessDeniedException;
+import java.rmi.AccessException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +60,37 @@ public class CustomExceptionHandler {
         response.setFailed(ErrorCodeDefs.SERVER_ERROR, ex.getMessage());
         return response;
     }
+
+    @ResponseStatus(OK)
+    @ResponseBody
+    @ExceptionHandler(value = {AuthenticationException.class})
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public BaseResponse handleAuthenticationException(Exception ex) {
+        BaseResponse response = new BaseResponse();
+        response.setFailed(ErrorCodeDefs.TOKEN_REQUIRED, ex.getMessage());
+        return response;
+    }
+
+    @ResponseStatus(OK)
+    @ResponseBody
+    @ExceptionHandler(value = {JwtTokenInvalid.class})
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public BaseResponse handleJwtExpired(Exception ex) {
+        BaseResponse response = new BaseResponse();
+        response.setFailed(ErrorCodeDefs.TOKEN_INVALID, ex.getMessage());
+        return response;
+    }
+
+    @ResponseStatus(OK)
+    @ResponseBody
+    @ExceptionHandler(value = {AccessDeniedException.class, org.springframework.security.access.AccessDeniedException.class})
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public BaseResponse accessDeniedException(Exception ex) {
+        BaseResponse response = new BaseResponse();
+        response.setFailed(ErrorCodeDefs.PERMISSION_INVALID, ErrorCodeDefs.getErrMsg(ErrorCodeDefs.PERMISSION_INVALID));
+        return response;
+    }
+
 
     public BaseResponse.Error processFieldErrors(List<FieldError> fieldErrors) {
         BaseResponse.Error error = BaseResponse.Error.builder()

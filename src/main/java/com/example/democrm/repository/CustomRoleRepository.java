@@ -18,7 +18,7 @@ public class CustomRoleRepository {
         return (((root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (dateFrom != null && dateTo != null) {
-                predicates.add(criteriaBuilder.between(root.get("updateDate"), dateFrom, dateTo));
+                predicates.add(criteriaBuilder.between(root.get("createdDate"), dateFrom, dateTo));
             }
             if (StringUtils.hasText(request.getRoleName())) {
                 predicates.add(criteriaBuilder.like(root.get("roleName"), "%" + request.getRoleName() + "%"));

@@ -40,7 +40,7 @@ public class BaseController {
     protected ResponseEntity<?> buildResponse() {
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setSuccess(false);
-        baseResponse.setFailed(ErrorCodeDefs.NOT_FOUND, ErrorCodeDefs.getErrMsg(ErrorCodeDefs.NOT_FOUND));
+        baseResponse.setFailed(ErrorCodeDefs.SERVER_ERROR, ErrorCodeDefs.getErrMsg(ErrorCodeDefs.SERVER_ERROR));
         return ResponseEntity.ok(baseResponse);
     }
 }

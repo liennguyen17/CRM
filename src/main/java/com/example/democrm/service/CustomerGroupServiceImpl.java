@@ -60,6 +60,7 @@ public class CustomerGroupServiceImpl implements CustomerGroupService {
         CustomerGroup customerGroup = CustomerGroup.builder()
                 .groupName(request.getGroupName())
                 .createdDate(new Timestamp(System.currentTimeMillis()))
+                .updateDate(new Timestamp(System.currentTimeMillis()))
                 .build();
         customerGroup.setUser(userOptional.get());
         customerGroup = customerGroupRepository.saveAndFlush(customerGroup);
@@ -75,7 +76,7 @@ public class CustomerGroupServiceImpl implements CustomerGroupService {
             customerGroupRepository.findById(id).stream().map(
                     customerGroup -> {
                         customerGroup.setGroupName(request.getGroupName());
-                        customerGroup.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+                        customerGroup.setUpdateDate(new Timestamp(System.currentTimeMillis()));
                         customerGroup.setUser(userOptional.get());
                         return customerGroupRepository.save(customerGroup);
                     }

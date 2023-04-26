@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class PermissionController extends BaseController {
     }
 
     @GetMapping("/all")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     ResponseEntity<?> getAll() {
         try {
             List<PermissionDTO> response = permissionService.getAll();
@@ -36,6 +38,7 @@ public class PermissionController extends BaseController {
     }
 
     @GetMapping("/{id}")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     ResponseEntity<?> getById(@PathVariable String id) {
         try {
             PermissionDTO response = permissionService.getById(id);
@@ -46,6 +49,7 @@ public class PermissionController extends BaseController {
     }
 
     @PostMapping("")
+    @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_PERMISSION')")
     ResponseEntity<?> creat(@Valid @RequestBody CreatePermissionRequest request) {
         try {
             PermissionDTO response = permissionService.create(request);
@@ -56,6 +60,7 @@ public class PermissionController extends BaseController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_PERMISSION')")
     ResponseEntity<?> update(@Valid @RequestBody UpdatePermissionRequest request,
                              @PathVariable("id") String id) {
         try {
@@ -67,6 +72,7 @@ public class PermissionController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_PERMISSION')")
     ResponseEntity<?> deleteById(@PathVariable String id) {
         try {
             PermissionDTO response = permissionService.deleteById(id);
@@ -77,6 +83,7 @@ public class PermissionController extends BaseController {
     }
 
     @DeleteMapping("/delete/all")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_PERMISSION')")
     ResponseEntity<?> deleteAll(@RequestBody List<String> ids) {
         List<PermissionDTO> response = permissionService.deleteAllId(ids);
         return buildListItemResponse(response, response.size());

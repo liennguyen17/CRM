@@ -18,6 +18,8 @@ public class CustomersDTO {
     private String customerName;
     @JsonFormat(pattern = DateTimeConstant.DATE_TIME_FORMAT, timezone = DateTimeConstant.TIME_ZONE)
     private Timestamp createdDate;
+    @JsonFormat(pattern = DateTimeConstant.DATE_TIME_FORMAT, timezone = DateTimeConstant.TIME_ZONE)
+    private Timestamp updateDate;
     private String phone;
     private String email;
     private String note;

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 @Entity
@@ -39,6 +40,12 @@ public class User {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "created_date")
+    private Timestamp createdDate;
+
+    @Column(name = "update_date")
+    private Timestamp updateDate;
+
     @Column(name = "is_super_admin")
     private Boolean isSuperAdmin = false;
 
@@ -60,9 +67,12 @@ public class User {
         if (isSuperAdmin) {
             authorities.add(new SimpleGrantedAuthority(RoleEnum.ADMIN.name()));
         }
-        if(!isSuperAdmin){
+        if (!isSuperAdmin) {
             authorities.add(new SimpleGrantedAuthority(RoleEnum.STAFF.name()));
         }
+//        if(isSuperAdmin){
+//            authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
+//        }
         return authorities;
     }
 

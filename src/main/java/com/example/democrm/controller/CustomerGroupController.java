@@ -20,6 +20,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,6 +64,7 @@ public class CustomerGroupController extends BaseController {
 
 
     @PostMapping("")
+    @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_GROUP_CUSTOMER')")
     ResponseEntity<?> create(@Valid @RequestBody CreateCustomerGroupRequest request) {
         try {
             CustomerGroupDTO response = customerGroupService.createGroup(request);
@@ -74,6 +76,7 @@ public class CustomerGroupController extends BaseController {
 
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_GROUP_CUSTOMER')")
     ResponseEntity<?> update(@Validated @RequestBody UpdateCustomerGroupRequest request,
                              @PathVariable("id") Long id) {
         try {
@@ -86,6 +89,7 @@ public class CustomerGroupController extends BaseController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_GROUP_CUSTOMER')")
     ResponseEntity<?> deleteById(@PathVariable Long id) {
         try {
             CustomerGroupDTO response = customerGroupService.deleteById(id);
@@ -97,6 +101,7 @@ public class CustomerGroupController extends BaseController {
 
 
     @DeleteMapping("/delete/all")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_GROUP_CUSTOMER')")
     ResponseEntity<?> deleteAllId(@RequestBody List<Long> ids) {
         try {
             List<CustomerGroupDTO> response = customerGroupService.deleteAllId(ids);

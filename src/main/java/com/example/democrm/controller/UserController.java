@@ -35,7 +35,7 @@ public class UserController extends BaseController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     ResponseEntity<?> getAllUser() {
         try {
             List<UserDTO> response = userService.getAll();
@@ -46,7 +46,7 @@ public class UserController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     ResponseEntity<?> getById(@PathVariable Long id) {
         try {
             UserDTO response = userService.getById(id);

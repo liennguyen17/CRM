@@ -18,5 +18,7 @@ public class CustomerGroupDTO {
     private String groupName;
     @JsonFormat(pattern = DateTimeConstant.DATE_TIME_FORMAT, timezone = DateTimeConstant.TIME_ZONE)
     private Timestamp createdDate;
+    @JsonFormat(pattern = DateTimeConstant.DATE_TIME_FORMAT, timezone = DateTimeConstant.TIME_ZONE)
+    private Timestamp updateDate;
     private User1DTO user;
 }

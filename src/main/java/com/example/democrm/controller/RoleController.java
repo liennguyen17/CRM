@@ -31,7 +31,7 @@ public class RoleController extends BaseController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     ResponseEntity<?> getAllRole() {
         try {
             List<RoleDTO> response = roleService.getAll();
@@ -42,7 +42,7 @@ public class RoleController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     ResponseEntity<?> getById(@PathVariable("id") Long id) throws Exception {
         try {
             RoleDTO response = roleService.getById(id);

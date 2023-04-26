@@ -27,6 +27,8 @@ public class CustomerGroup {
     private String groupName;
     @Column(name = "created_date")
     private Timestamp createdDate;
+    @Column(name = "update_date")
+    private Timestamp updateDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

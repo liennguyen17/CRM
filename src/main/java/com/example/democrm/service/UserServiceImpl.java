@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,6 +73,8 @@ public class UserServiceImpl implements UserService {
                 .password(encoder.encode(request.getPassword()))
                 .address(request.getAddress())
                 .isSuperAdmin(false)
+                .createdDate(new Timestamp(System.currentTimeMillis()))
+                .updateDate(new Timestamp(System.currentTimeMillis()))
                 .build();
         user.setRole(buildRole(roleOptional.get().getRoleId()));    //lay ra id cua role_sau r se thu xem get dc name ko
         user = userRepository.saveAndFlush(user);
@@ -93,7 +96,8 @@ public class UserServiceImpl implements UserService {
             user.setEmail(request.getEmail());
             user.setPassword(encoder.encode(request.getPassword()));
             user.setAddress(request.getAddress());
-//            user.setIsSuperAdmin(request.getIsSuperAdmin());
+            user.setIsSuperAdmin(request.getIsSuperAdmin());
+            user.setUpdateDate(new Timestamp(System.currentTimeMillis()));
             user.setRole(buildRole(roleOptional.get().getRoleId()));
             return modelMapper.map(userRepository.save(user), UserDTO.class);
         }

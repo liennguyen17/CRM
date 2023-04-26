@@ -21,17 +21,16 @@ public class Customers {
     private Long customerId;
     @Column(name = "customer_name", length = 100)
     private String customerName;
-
     @ManyToOne
     @JoinColumn(name = "customer_status_id")
     private CustomerStatus customerStatus;
-
     @ManyToOne
     @JoinColumn(name = "customer_group_id")
     private CustomerGroup customerGroup;
-
     @Column(name = "created_date")
     private Timestamp createdDate;
+    @Column(name = "update_date")
+    private Timestamp updateDate;
     @Column(name = "phone", length = 10)
     private String phone;
     @Column(name = "email", length = 100)

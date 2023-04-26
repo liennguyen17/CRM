@@ -1,5 +1,6 @@
 package com.example.democrm.security;
 
+import com.example.democrm.config.CorsConfigFilter;
 import com.example.democrm.service.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -25,11 +26,14 @@ public class WebSecurityConfig {
     private final AuthEntryPointJwt unauthorizedHandler;
     private final JwtTokenProvider jwtTokenProvider;
 
+    private final CorsConfigFilter corsConfigFilter;
+
     @Autowired
-    public WebSecurityConfig(UserDetailsService myUserDetailsService, AuthEntryPointJwt unauthorizedHandler, JwtTokenProvider jwtTokenProvider) {
+    public WebSecurityConfig(UserDetailsService myUserDetailsService, AuthEntryPointJwt unauthorizedHandler, JwtTokenProvider jwtTokenProvider, CorsConfigFilter corsConfigFilter) {
         this.myUserDetailsService = myUserDetailsService;
         this.unauthorizedHandler = unauthorizedHandler;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.corsConfigFilter = corsConfigFilter;
     }
 
     @Bean
@@ -57,7 +61,7 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
+        http.csrf().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler)
                 .and()
@@ -65,13 +69,15 @@ public class WebSecurityConfig {
                 .authorizeRequests()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/test/**").authenticated()
-                .anyRequest().authenticated();
+                .anyRequest().permitAll();  // tạm thời ko xét quyền để call thử, sau khi xong xét lại quyền như cũ  .anyRequest().authenticated();
+
 
 //                .antMatchers("/auth/**").permitAll()
 //                .antMatchers("/test/**").authenticated()
 //                .anyRequest().authenticated();
 
         http.authenticationProvider(authenticationProvider());
+        http.addFilterBefore(corsConfigFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

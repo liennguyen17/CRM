@@ -62,6 +62,7 @@ public class CustomersServiceImpl implements CustomersService {
         Customers customers = Customers.builder()
                 .customerName(request.getCustomerName())
                 .createdDate(new Timestamp(System.currentTimeMillis()))
+                .updateDate(new Timestamp(System.currentTimeMillis()))
                 .phone(request.getPhone())
                 .email(request.getEmail())
                 .note(request.getNote())
@@ -73,28 +74,6 @@ public class CustomersServiceImpl implements CustomersService {
         return modelMapper.map(customers, CustomersDTO.class);
     }
 
-//    @Override
-//    @Transactional
-//    public CustomersDTO updateCustomerById(UpdateCustomerRequest request, Long id) {
-//        Optional<Customers> customersOptional = customersRepository.findById(id);
-//        Optional<CustomerStatus> customerStatusOptional = customerStatusRepository.findById(request.getStatus());
-//        if (customersOptional.isPresent()) {
-//            customersRepository.findById(id).stream().map(
-//                    customers -> {
-//                        customers.setCustomerName(request.getCustomerName());
-//                        customers.setPhone(request.getPhone());
-//                        customers.setEmail(request.getEmail());
-//                        customers.setNote(request.getNote());
-//                        customers.setAddress(request.getAddress());
-//
-//                        return customersRepository.save(customers);
-//                    }
-//            ).collect(Collectors.toList());
-//            return modelMapper.map(customersOptional, CustomersDTO.class);
-//        }
-//        throw new RuntimeException("Có lỗi xảy ra trong quá trình cập nhật khách hàng");
-////        return null;
-//    }
 
     @Override
     @Transactional
@@ -109,6 +88,7 @@ public class CustomersServiceImpl implements CustomersService {
             customers.setEmail(request.getEmail());
             customers.setNote(request.getNote());
             customers.setAddress(request.getAddress());
+            customers.setUpdateDate(new Timestamp(System.currentTimeMillis()));
             customers.setCustomerStatus(customerStatusOptional.get());
             customers.setCustomerGroup(customerGroupOptional.get());
             return modelMapper.map(customersRepository.save(customers), CustomersDTO.class);

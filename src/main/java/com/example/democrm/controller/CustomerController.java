@@ -63,7 +63,7 @@ public class CustomerController extends BaseController {
 
 
     @PostMapping("")
-//    @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_CUSTOMER','STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_CUSTOMER','STAFF')")
     ResponseEntity<?> create(@Valid @RequestBody CreateCustomerRequest request) {
         try {
             CustomersDTO response = customersService.createCustomers(request);
@@ -74,7 +74,7 @@ public class CustomerController extends BaseController {
     }
 
     @PutMapping("/{id}")
-//    @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_CUSTOMER','STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_CUSTOMER','STAFF')")
     ResponseEntity<?> update(@Valid @RequestBody UpdateCustomerRequest request,
                              @PathVariable("id") Long id) {
         try {
@@ -87,7 +87,7 @@ public class CustomerController extends BaseController {
 
 
     @DeleteMapping("/{id}")
-//    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_CUSTOMER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_CUSTOMER')")
     ResponseEntity<?> deleteById(@PathVariable Long id) {
         try {
             CustomersDTO response = customersService.deleteById(id);
@@ -99,7 +99,7 @@ public class CustomerController extends BaseController {
 
 
     @DeleteMapping("/delete/all")
-//    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_CUSTOMER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_CUSTOMER')")
     ResponseEntity<?> deleteAllId(@RequestBody List<Long> ids) {
         List<CustomersDTO> response = customersService.deleteList(ids);
         return buildListItemResponse(response, response.size());

@@ -2,10 +2,7 @@ package com.example.democrm.request.customers;
 
 import com.example.democrm.constant.DateTimeConstant;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -14,6 +11,7 @@ import java.sql.Timestamp;
 public class CreateCustomerRequest {
     @NotBlank(message = "Tên khách hàng không được để trống")
     @Size(min = 6, max = 100, message = "Tên phải có ít nhất 6, nhiều nhất 100 kí tự!")
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Tên khách hàng không được chứa ký tự đặc biệt!")
     private String customerName;
     @NotBlank(message = "Số điện thoại không được để trống")
     private String phone;

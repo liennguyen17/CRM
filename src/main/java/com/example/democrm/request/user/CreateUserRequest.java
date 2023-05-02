@@ -1,16 +1,14 @@
 package com.example.democrm.request.user;
 
 import com.example.democrm.validator.DateValidateAnnotation;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
 public class CreateUserRequest {
     @NotBlank(message = "Tên nguời dùng không được để trống")
     @Size(min = 6, max = 100, message = "Tên phải có ít nhất 6, nhiều nhất 100 kí tự!")
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Tên không được chứa ký tự đặc biệt!")
     private String userName;
 
     @NotBlank(message = "Ngày sinh không được để trống")

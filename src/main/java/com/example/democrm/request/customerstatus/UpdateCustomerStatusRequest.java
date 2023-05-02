@@ -2,6 +2,7 @@ package com.example.democrm.request.customerstatus;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -12,5 +13,6 @@ public class UpdateCustomerStatusRequest {
 
     @Size(min = 5, message = "statusName tối thiểu 5 kí tự")
     @NotBlank(message = "statusName không được để trống")
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Tên trạng thái không được chứa ký tự đặc biệt!")
     private String statusName;
 }

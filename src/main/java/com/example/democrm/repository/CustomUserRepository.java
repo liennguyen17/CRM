@@ -14,6 +14,7 @@ import java.util.List;
 @Repository
 public class CustomUserRepository {
     public static Specification<User> filterSpecification(Date dateFrom, Date dateTo,
+                                                          Date dateOfBirthFrom, Date dateOfBirthTo,
                                                           FilterUserRequest request) {
         return (((root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -21,7 +22,10 @@ public class CustomUserRepository {
             // luôn không liệt kê Superadmin cho API
             predicates.add(criteriaBuilder.equal(root.get("isSuperAdmin"), false)); //xem co anh huong gi den viec tim kiem theo isSuperAdmin ko
             if (dateFrom != null && dateTo != null) {
-                predicates.add(criteriaBuilder.between(root.get("date"), dateFrom, dateTo));
+                predicates.add(criteriaBuilder.between(root.get("createdDate"), dateFrom, dateTo));
+            }
+            if(dateOfBirthFrom != null && dateOfBirthTo != null){
+                predicates.add(criteriaBuilder.between(root.get("date"), dateOfBirthFrom, dateOfBirthTo));
             }
             if (StringUtils.hasText(request.getUserName())) {
                 predicates.add(criteriaBuilder.like(root.get("userName"), "%" + request.getUserName() + "%"));

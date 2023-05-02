@@ -69,12 +69,12 @@ public class WebSecurityConfig {
                 .authorizeRequests()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/test/**").authenticated()
+                .requestMatchers("/customer/**").permitAll()
                 .anyRequest().authenticated();
 
 //                .antMatchers("/auth/**").permitAll()
 //                .antMatchers("/test/**").authenticated()
 //                .anyRequest().permitAll();  // tạm thời ko xét quyền để call thử, sau khi xong xét lại quyền như cũ  .anyRequest().authenticated();
-
 
 
         http.authenticationProvider(authenticationProvider());

@@ -7,6 +7,7 @@ import com.example.democrm.repository.PermissionRepository;
 import com.example.democrm.request.permission.CreatePermissionRequest;
 import com.example.democrm.request.permission.FilterPermissionRequest;
 import com.example.democrm.request.permission.UpdatePermissionRequest;
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -42,25 +43,32 @@ public class PermissionServiceImpl implements PermissionService {
         if (permissionOptional.isPresent()) {
             return modelMapper.map(permissionOptional.get(), PermissionDTO.class);
         } else {
-            throw new Exception("Id nguời dùng không tồn tại");
+            throw new Exception("Id quyền không tồn tại trong hệ thống!");
         }
-//        return null;
     }
 
     @Override
     public PermissionDTO create(CreatePermissionRequest request) {
-        Permission permission = Permission.builder()
-                .permissionId(request.getPermissionId())
-                .permissionName(request.getPermissionName())
-                .description(request.getDescription())
-                .status(request.getStatus())
-                .build();
-        permission = permissionRepository.saveAndFlush(permission);
-        return modelMapper.map(permission, PermissionDTO.class);
+        try{
+            Permission permission = Permission.builder()
+                    .permissionId(request.getPermissionId())
+                    .permissionName(request.getPermissionName())
+                    .description(request.getDescription())
+                    .status(request.getStatus())
+                    .build();
+            permission = permissionRepository.saveAndFlush(permission);
+            return modelMapper.map(permission, PermissionDTO.class);
+        }catch (Exception ex) {
+            throw new RuntimeException("Có lỗi xảy ra trong quá trình tạo mới quyền!");
+        }
+
     }
 
     @Override
     public PermissionDTO update(UpdatePermissionRequest request, String id) {
+        if(!permissionRepository.existsById(id)){
+            throw new EntityNotFoundException("Quyền có id:" + id + " cần cập nhật không tồn tại trong hệ thống!");
+        }
         Optional<Permission> permissionOptional = permissionRepository.findById(id);
         if (permissionOptional.isPresent()) {
             Permission permission = permissionOptional.get();
@@ -69,17 +77,20 @@ public class PermissionServiceImpl implements PermissionService {
             permission.setStatus(request.getStatus());
             return modelMapper.map(permissionRepository.save(permission), PermissionDTO.class);
         }
-        throw new RuntimeException("Có lỗi xảy ra trong quá trình cập nhật thông tin người dùng");
+        throw new RuntimeException("Có lỗi xảy ra trong quá trình cập nhật quyền!");
     }
 
     @Override
     public PermissionDTO deleteById(String id) {
+        if (!permissionRepository.existsById(id)){
+            throw new EntityNotFoundException("Quyền có id:" + id + " cần xóa không tồn tại trong hệ thống!");
+        }
         Optional<Permission> permissionOptional = permissionRepository.findById(id);
         if (permissionOptional.isPresent()) {
             permissionRepository.deleteById(id);
             return modelMapper.map(permissionOptional, PermissionDTO.class);
         }
-        throw new RuntimeException("Có lỗi xảy ra trong quá trình xóa người dùng");
+        throw new RuntimeException("Có lỗi xảy ra trong quá trình xóa quyền!");
     }
 
     @Override

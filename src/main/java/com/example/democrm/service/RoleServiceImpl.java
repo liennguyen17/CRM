@@ -9,6 +9,7 @@ import com.example.democrm.repository.RoleRepository;
 import com.example.democrm.request.role.CreateRoleRequest;
 import com.example.democrm.request.role.FilterRoleRequest;
 import com.example.democrm.request.role.UpdateRoleRequest;
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -44,30 +45,39 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleDTO getById(Long id) throws Exception {
+    public RoleDTO getById(String idStr) {
+        Long id;
+        try {
+            id = Long.parseLong(idStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Tham số truyền vào không hợp lệ");
+        }
         Optional<Role> role = roleRepository.findById(id);
         if (role.isPresent()) {
             return modelMapper.map(role.get(), RoleDTO.class);
         } else {
-            throw new Exception("Id nguời dùng không tồn tại");
+            throw new RuntimeException("Id vai tro nguời dùng không tồn tại trong hệ thống!");
         }
-//        return null;
     }
 
     @Override
     public RoleDTO createRole(CreateRoleRequest request) {
-        checkPermissionIsValid(request.getPermissionIds());
-        Role role = Role.builder()
-                .roleName(request.getRoleName())
-                .createdDate(new Timestamp(System.currentTimeMillis()))
-                .updateDate(new Timestamp(System.currentTimeMillis()))
-                .status(request.getStatus())
-                .build();
-        List<Permission> permissions = buildPermission(request.getPermissionIds());
-        role.setPermissions(permissions);
+        try{
+            checkPermissionIsValid(request.getPermissionIds());
+            Role role = Role.builder()
+                    .roleName(request.getRoleName())
+                    .createdDate(new Timestamp(System.currentTimeMillis()))
+                    .updateDate(new Timestamp(System.currentTimeMillis()))
+                    .status(request.getStatus())
+                    .build();
+            List<Permission> permissions = buildPermission(request.getPermissionIds());
+            role.setPermissions(permissions);
 
-        role = roleRepository.saveAndFlush(role);
-        return modelMapper.map(role, RoleDTO.class);
+            role = roleRepository.saveAndFlush(role);
+            return modelMapper.map(role, RoleDTO.class);
+        } catch (Exception ex){
+            throw new RuntimeException("Có lỗi xảy ra trong quá trình tạo vai trò mới!");
+        }
     }
 
     @Override
@@ -91,12 +101,14 @@ public class RoleServiceImpl implements RoleService {
     //xem lai phan xoa vi no se ko map duoc doi tuong chua colection , sua lai nhu file demoCRM tra ve true false
     @Override
     public RoleDTO deleteById(Long id) {
+        if(!roleRepository.existsById(id)){
+            throw new EntityNotFoundException("Vai tro co id:"+ id + " cần xóa không tồn tại trên hệ thống!");
+        }
         Optional<Role> roleOptional = roleRepository.findById(id);
         if (roleOptional.isPresent()) {
             roleRepository.deleteById(id);
             return modelMapper.map(roleOptional, RoleDTO.class);
         }
-//        return null;
         throw new RuntimeException("Có lỗi xảy ra trong quá trình xóa người dùng");
     }
 

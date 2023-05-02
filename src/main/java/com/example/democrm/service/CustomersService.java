@@ -13,7 +13,9 @@ import java.util.List;
 public interface CustomersService {
     List<CustomersDTO> getAll();
 
-    CustomersDTO getById(Long id);
+//    CustomersDTO getById(Long id);
+
+    CustomersDTO getId(String idStr);
 
     CustomersDTO createCustomers(CreateCustomerRequest request);
 

@@ -50,59 +50,46 @@ public class CustomerController extends BaseController {
         }
     }
 
-
     @GetMapping("/{id}")
-    ResponseEntity<?> getById(@PathVariable Long id) {
-        try {
-            CustomersDTO response = customersService.getById(id);
-            return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
+    ResponseEntity<?> getId(@PathVariable String id) {
+        CustomersDTO response = customersService.getId(id);
+        return buildItemResponse(response);
     }
 
 
     @PostMapping("")
-    @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_CUSTOMER','STAFF')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_CUSTOMER','STAFF')")
     ResponseEntity<?> create(@Valid @RequestBody CreateCustomerRequest request) {
-        try {
-            CustomersDTO response = customersService.createCustomers(request);
-            return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
+        CustomersDTO response = customersService.createCustomers(request);
+        return buildItemResponse(response);
     }
+
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_CUSTOMER','STAFF')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_CUSTOMER','STAFF')")
     ResponseEntity<?> update(@Valid @RequestBody UpdateCustomerRequest request,
                              @PathVariable("id") Long id) {
-        try {
-            CustomersDTO response = customersService.updateCustomerById(request, id);
-            return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
+        CustomersDTO response = customersService.updateCustomerById(request, id);
+        return buildItemResponse(response);
     }
 
-
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_CUSTOMER')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_CUSTOMER')")
     ResponseEntity<?> deleteById(@PathVariable Long id) {
-        try {
-            CustomersDTO response = customersService.deleteById(id);
-            return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
+        CustomersDTO response = customersService.deleteById(id);
+        return buildItemResponse(response);
     }
 
 
     @DeleteMapping("/delete/all")
-    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_CUSTOMER')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_CUSTOMER')")
     ResponseEntity<?> deleteAllId(@RequestBody List<Long> ids) {
-        List<CustomersDTO> response = customersService.deleteList(ids);
-        return buildListItemResponse(response, response.size());
+        try{
+            List<CustomersDTO> response = customersService.deleteList(ids);
+            return buildListItemResponse(response, response.size());
+        } catch (Exception ex) {
+            return buildResponse();
+        }
     }
 
 

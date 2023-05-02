@@ -13,7 +13,7 @@ import java.util.List;
 public interface RoleService {
     List<RoleDTO> getAll();
 
-    RoleDTO getById(Long id) throws Exception;
+    RoleDTO getById(String idStr) throws Exception;
 
     RoleDTO createRole(CreateRoleRequest request);
 

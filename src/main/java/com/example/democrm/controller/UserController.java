@@ -47,54 +47,42 @@ public class UserController extends BaseController {
 
     @GetMapping("/{id}")
 //    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    ResponseEntity<?> getById(@PathVariable Long id) {
-        try {
+    ResponseEntity<?> getById(@PathVariable String id) {
             UserDTO response = userService.getById(id);
             return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
     }
 
     @PostMapping("")
     @PreAuthorize("hasAnyAuthority('CREATE_USER','ADMIN')")
-    ResponseEntity<?> creatUser(@Valid @RequestBody CreateUserRequest request) {
-        try {
-            UserDTO response = userService.createUser(request);
-            return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
+    ResponseEntity<?> creatUser(@Valid @RequestBody CreateUserRequest request) throws ParseException {
+        UserDTO response = userService.createUser(request);
+        return buildItemResponse(response);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('UPDATE_USER', 'ADMIN')")
     ResponseEntity<?> update(@Validated @RequestBody UpdateUserRequest request,
                              @PathVariable("id") Long id) throws ParseException {
-        try {
-            UserDTO response = userService.update(request, id);
-            return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
+        UserDTO response = userService.update(request, id);
+        return buildItemResponse(response);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_USER')")
     ResponseEntity<?> deleteById(@PathVariable Long id) {
-        try {
-            UserDTO response = userService.deleteById(id);
-            return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
+        UserDTO response = userService.deleteById(id);
+        return buildItemResponse(response);
     }
 
     @DeleteMapping("/delete/all")
     @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_USER')")
     ResponseEntity<?> deleteAllId(@RequestBody List<Long> ids) {
-        List<UserDTO> response = userService.deleteAllId(ids);
-        return buildListItemResponse(response, response.size());
+        try{
+            List<UserDTO> response = userService.deleteAllId(ids);
+            return buildListItemResponse(response, response.size());
+        } catch (Exception ex) {
+            return buildResponse();
+        }
     }
 
     @PostMapping("/filter")
@@ -103,7 +91,9 @@ public class UserController extends BaseController {
         Page<User> userPage = userService.filterUser(
                 request,
                 !Strings.isEmpty(request.getDateFrom()) ? MyUtils.convertDateFromString(request.getDateFrom(), DateTimeConstant.DATE_FORMAT) : null,
-                !Strings.isEmpty(request.getDateTo()) ? MyUtils.convertDateFromString(request.getDateTo(), DateTimeConstant.DATE_FORMAT) : null
+                !Strings.isEmpty(request.getDateTo()) ? MyUtils.convertDateFromString(request.getDateTo(), DateTimeConstant.DATE_FORMAT) : null,
+                !Strings.isEmpty(request.getDateOfBirthFrom()) ? MyUtils.convertDateFromString(request.getDateOfBirthFrom(), DateTimeConstant.DATE_FORMAT) : null,
+                !Strings.isEmpty(request.getDateOfBirthTo()) ? MyUtils.convertDateFromString(request.getDateOfBirthTo(), DateTimeConstant.DATE_FORMAT) : null
         );
         List<UserDTO> userDTOS = userPage.getContent().stream().map(
                 user -> modelMapper.map(user, UserDTO.class)

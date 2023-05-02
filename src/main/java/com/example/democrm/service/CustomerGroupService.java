@@ -14,7 +14,7 @@ import java.util.List;
 public interface CustomerGroupService {
     List<CustomerGroupDTO> getAll();
 
-    CustomerGroupDTO getById(Long id);
+    CustomerGroupDTO getById(String idStr);
 
     CustomerGroupDTO createGroup(CreateCustomerGroupRequest request);
 

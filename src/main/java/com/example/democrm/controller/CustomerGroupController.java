@@ -53,25 +53,17 @@ public class CustomerGroupController extends BaseController {
 
 
     @GetMapping("/{id}")
-    ResponseEntity<?> getById(@PathVariable Long id) {
-        try {
-            CustomerGroupDTO response = customerGroupService.getById(id);
-            return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
+    ResponseEntity<?> getById(@PathVariable String id) {
+        CustomerGroupDTO response = customerGroupService.getById(id);
+        return buildItemResponse(response);
     }
 
 
     @PostMapping("")
     @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_GROUP_CUSTOMER')")
     ResponseEntity<?> create(@Valid @RequestBody CreateCustomerGroupRequest request) {
-        try {
-            CustomerGroupDTO response = customerGroupService.createGroup(request);
-            return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
+        CustomerGroupDTO response = customerGroupService.createGroup(request);
+        return buildItemResponse(response);
     }
 
 
@@ -79,24 +71,16 @@ public class CustomerGroupController extends BaseController {
     @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_GROUP_CUSTOMER')")
     ResponseEntity<?> update(@Validated @RequestBody UpdateCustomerGroupRequest request,
                              @PathVariable("id") Long id) {
-        try {
-            CustomerGroupDTO response = customerGroupService.updateGroup(request, id);
-            return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
+        CustomerGroupDTO response = customerGroupService.updateGroup(request, id);
+        return buildItemResponse(response);
     }
 
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_GROUP_CUSTOMER')")
     ResponseEntity<?> deleteById(@PathVariable Long id) {
-        try {
             CustomerGroupDTO response = customerGroupService.deleteById(id);
             return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
     }
 
 

@@ -39,54 +39,42 @@ public class PermissionController extends BaseController {
 
     @GetMapping("/{id}")
 //    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    ResponseEntity<?> getById(@PathVariable String id) {
-        try {
+    ResponseEntity<?> getById(@PathVariable String id) throws Exception {
             PermissionDTO response = permissionService.getById(id);
             return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
     }
 
     @PostMapping("")
     @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_PERMISSION')")
     ResponseEntity<?> creat(@Valid @RequestBody CreatePermissionRequest request) {
-        try {
             PermissionDTO response = permissionService.create(request);
             return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_PERMISSION')")
     ResponseEntity<?> update(@Valid @RequestBody UpdatePermissionRequest request,
                              @PathVariable("id") String id) {
-        try {
             PermissionDTO response = permissionService.update(request, id);
             return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_PERMISSION')")
     ResponseEntity<?> deleteById(@PathVariable String id) {
-        try {
             PermissionDTO response = permissionService.deleteById(id);
             return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
     }
 
     @DeleteMapping("/delete/all")
     @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_PERMISSION')")
     ResponseEntity<?> deleteAll(@RequestBody List<String> ids) {
-        List<PermissionDTO> response = permissionService.deleteAllId(ids);
-        return buildListItemResponse(response, response.size());
+        try{
+            List<PermissionDTO> response = permissionService.deleteAllId(ids);
+            return buildListItemResponse(response, response.size());
+        }catch (Exception ex) {
+            return buildResponse();
+        }
     }
 
     @PostMapping("/filter")

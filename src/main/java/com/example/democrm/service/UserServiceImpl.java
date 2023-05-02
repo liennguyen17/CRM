@@ -11,6 +11,7 @@ import com.example.democrm.request.user.CreateUserRequest;
 import com.example.democrm.request.user.FilterUserRequest;
 import com.example.democrm.request.user.UpdateUserRequest;
 import com.example.democrm.utils.MyUtils;
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,34 +52,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getById(Long id) {
+    public UserDTO getById(String idStr) {
+        Long id;
+        try {
+            id = Long.parseLong(idStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Tham số truyền vào không hợp lệ");
+        }
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return modelMapper.map(user.get(), UserDTO.class);
         } else {
-            throw new RuntimeException("Id nguời dùng không tồn tại");
+            throw new RuntimeException("Id nguời dùng không tồn tại trong hệ thống!");
         }
     }
 
     @Override
     @Transactional
     public UserDTO createUser(CreateUserRequest request) throws ParseException {
-        checkUserIsExistByName(request.getUserName(), null);
-        checkRoleIsValid(request.getRoleId());
-        Optional<Role> roleOptional = roleRepository.findById(request.getRoleId());
-        User user = User.builder()
-                .userName(request.getUserName())
-                .date(MyUtils.convertDateFromString(request.getDate(), DateTimeConstant.DATE_FORMAT))
-                .email(request.getEmail())
-                .password(encoder.encode(request.getPassword()))
-                .address(request.getAddress())
-                .isSuperAdmin(false)
-                .createdDate(new Timestamp(System.currentTimeMillis()))
-                .updateDate(new Timestamp(System.currentTimeMillis()))
-                .build();
-        user.setRole(buildRole(roleOptional.get().getRoleId()));    //lay ra id cua role_sau r se thu xem get dc name ko
-        user = userRepository.saveAndFlush(user);
-        return modelMapper.map(user, UserDTO.class);
+        try {
+            checkUserIsExistByName(request.getUserName(), null);
+            checkRoleIsValid(request.getRoleId());
+            Optional<Role> roleOptional = roleRepository.findById(request.getRoleId());
+            User user = User.builder()
+                    .userName(request.getUserName())
+                    .date(MyUtils.convertDateFromString(request.getDate(), DateTimeConstant.DATE_FORMAT))
+                    .email(request.getEmail())
+                    .password(encoder.encode(request.getPassword()))
+                    .address(request.getAddress())
+                    .isSuperAdmin(false)
+                    .createdDate(new Timestamp(System.currentTimeMillis()))
+                    .updateDate(new Timestamp(System.currentTimeMillis()))
+                    .build();
+            user.setRole(buildRole(roleOptional.get().getRoleId()));    //lay ra id cua role_sau r se thu xem get dc name ko
+            user = userRepository.saveAndFlush(user);
+            return modelMapper.map(user, UserDTO.class);
+        } catch (Exception ex){
+            throw new RuntimeException("Có lỗi xảy ra trong quá trình tạo người dùng mới");
+        }
     }
 
     @Override
@@ -107,12 +118,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO deleteById(Long id) {
+        if(!userRepository.existsById(id)){
+            throw new EntityNotFoundException("Người dùng có id:"+ id + " cần xóa không tồn tại trong hệ thống!");
+        }
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             userRepository.deleteById(id);
             return modelMapper.map(userOptional, UserDTO.class);
         }
-//        return null;
         throw new RuntimeException("Có lỗi xảy ra trong quá trình xóa người dùng");
     }
 
@@ -128,8 +141,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> filterUser(FilterUserRequest request, Date dateFrom, Date dateTo) {
-        Specification<User> specification = CustomUserRepository.filterSpecification(dateFrom, dateTo, request);
+    public Page<User> filterUser(FilterUserRequest request, Date dateFrom, Date dateTo,Date dateOfBirthFrom, Date dateOfBirthTo) {
+        Specification<User> specification = CustomUserRepository.filterSpecification(dateFrom, dateTo, dateOfBirthFrom, dateOfBirthTo,request);
         Page<User> userPage = userRepository.findAll(specification, PageRequest.of(request.getStart(), request.getLimit()));
         return userPage;
     }

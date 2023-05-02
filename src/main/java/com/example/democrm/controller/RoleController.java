@@ -43,36 +43,24 @@ public class RoleController extends BaseController {
 
     @GetMapping("/{id}")
 //    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    ResponseEntity<?> getById(@PathVariable("id") Long id) throws Exception {
-        try {
-            RoleDTO response = roleService.getById(id);
-            return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
+    ResponseEntity<?> getById(@PathVariable("id") String id) throws Exception {
+        RoleDTO response = roleService.getById(id);
+        return buildItemResponse(response);
     }
 
     @PostMapping("")
     @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_ROLE')")
     ResponseEntity<?> creatRole(@Validated @RequestBody CreateRoleRequest request) {
-        try {
             RoleDTO response = roleService.createRole(request);
             return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_ROLE')")
     ResponseEntity<?> update(@Validated @RequestBody UpdateRoleRequest request,
                              @PathVariable("id") Long id) {
-        try {
             RoleDTO response = roleService.update(request, id);
             return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
     }
 
     //xem lai khi van xoa duoc nhung van nhay vao loi _ tinh sua lai nhu sau
@@ -87,19 +75,20 @@ public class RoleController extends BaseController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'DELETE_ROLE')")
     ResponseEntity<?> deleteById(@PathVariable("id") Long id) {
-        try {
             RoleDTO response = roleService.deleteById(id);
             return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
     }
 
     @DeleteMapping("/delete/all")
     @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_ROLE')")
     ResponseEntity<?> deleteAllId(@RequestBody List<Long> ids) {
-        List<RoleDTO> response = roleService.deleteAllId(ids);
-        return buildListItemResponse(response, response.size());
+        try{
+            List<RoleDTO> response = roleService.deleteAllId(ids);
+            return buildListItemResponse(response, response.size());
+        }catch (Exception ex) {
+            return buildResponse();
+        }
+
     }
 
     @PostMapping("/filter")

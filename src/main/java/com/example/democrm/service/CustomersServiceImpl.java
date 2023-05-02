@@ -11,6 +11,7 @@ import com.example.democrm.repository.CustomersRepository;
 import com.example.democrm.request.customers.CreateCustomerRequest;
 import com.example.democrm.request.customers.FilterCustomerRequest;
 import com.example.democrm.request.customers.UpdateCustomerRequest;
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,6 @@ import java.util.stream.Collectors;
 @Service
 public class CustomersServiceImpl implements CustomersService {
     private final CustomersRepository customersRepository;
-
     private final CustomerStatusRepository customerStatusRepository;
     private final CustomerGroupRepository customerGroupRepository;
     private final ModelMapper modelMapper = new ModelMapper();
@@ -41,7 +41,6 @@ public class CustomersServiceImpl implements CustomersService {
         this.customerGroupRepository = customerGroupRepository;
     }
 
-
     @Override
     public List<CustomersDTO> getAll() {
         return customersRepository.findAll().stream().map(
@@ -49,35 +48,63 @@ public class CustomersServiceImpl implements CustomersService {
         ).collect(Collectors.toList());
     }
 
+//    @Override
+//    public CustomersDTO getById(Long id) {
+//        Optional<Customers> customersOptional = customersRepository.findById(id);
+//        if (customersOptional.isEmpty()) {
+//            throw new EntityNotFoundException("Không tìm thấy khách hàng với id:" + id);
+//        }
+//        return modelMapper.map(customersOptional.get(), CustomersDTO.class);
+//    }
+
     @Override
-    public CustomersDTO getById(Long id) {
-        return modelMapper.map(customersRepository.findById(id), CustomersDTO.class);
+    public CustomersDTO getId(String idStr) {
+        Long id;
+        try {
+            id = Long.parseLong(idStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Tham số truyền vào không hợp lệ");
+        }
+        Optional<Customers> customersOptional = customersRepository.findById(id);
+        if (customersOptional.isEmpty()) {
+            throw new EntityNotFoundException("Không tìm thấy khách hàng với id:" + id);
+        }
+        return modelMapper.map(customersOptional.get(), CustomersDTO.class);
     }
+
 
     @Override
     @Transactional
     public CustomersDTO createCustomers(CreateCustomerRequest request) {
-        Optional<CustomerStatus> customerStatusOptional = customerStatusRepository.findById(request.getStatus());
-        Optional<CustomerGroup> customerGroupOptional = customerGroupRepository.findById(request.getGroup());
-        Customers customers = Customers.builder()
-                .customerName(request.getCustomerName())
-                .createdDate(new Timestamp(System.currentTimeMillis()))
-                .updateDate(new Timestamp(System.currentTimeMillis()))
-                .phone(request.getPhone())
-                .email(request.getEmail())
-                .note(request.getNote())
-                .address(request.getAddress())
-                .build();
-        customers.setCustomerStatus(customerStatusOptional.get());
-        customers.setCustomerGroup(customerGroupOptional.get());
-        customers = customersRepository.saveAndFlush(customers);
-        return modelMapper.map(customers, CustomersDTO.class);
+        try {
+            Optional<CustomerStatus> customerStatusOptional = customerStatusRepository.findById(request.getStatus());
+            Optional<CustomerGroup> customerGroupOptional = customerGroupRepository.findById(request.getGroup());
+            Customers customers = Customers.builder()
+                    .customerName(request.getCustomerName())
+                    .createdDate(new Timestamp(System.currentTimeMillis()))
+                    .updateDate(new Timestamp(System.currentTimeMillis()))
+                    .phone(request.getPhone())
+                    .email(request.getEmail())
+                    .note(request.getNote())
+                    .address(request.getAddress())
+                    .build();
+            customers.setCustomerStatus(customerStatusOptional.get());
+            customers.setCustomerGroup(customerGroupOptional.get());
+            customers = customersRepository.saveAndFlush(customers);
+            return modelMapper.map(customers, CustomersDTO.class);
+        } catch (Exception ex) {
+            throw new RuntimeException("Có lỗi xảy ra trong quá trình tạo mới khách hàng");
+        }
+
     }
 
 
     @Override
     @Transactional
     public CustomersDTO updateCustomerById(UpdateCustomerRequest request, Long id) {
+        if (!customersRepository.existsById(id)) {
+            throw new EntityNotFoundException("Khách hàng có id:" + id + " cần cập nhật không tồn tại trong hệ thống!");
+        }
         Optional<Customers> customersOptional = customersRepository.findById(id);
         Optional<CustomerStatus> customerStatusOptional = customerStatusRepository.findById(request.getStatus());
         Optional<CustomerGroup> customerGroupOptional = customerGroupRepository.findById(request.getGroup());
@@ -94,19 +121,20 @@ public class CustomersServiceImpl implements CustomersService {
             return modelMapper.map(customersRepository.save(customers), CustomersDTO.class);
         }
         throw new RuntimeException("Có lỗi xảy ra trong quá trình cập nhật khách hàng");
-//        return null;
     }
 
     @Override
     @Transactional
     public CustomersDTO deleteById(Long id) {
+        if (!customersRepository.existsById(id)) {
+            throw new EntityNotFoundException("Khách hàng có id:" + id + " cần xóa không tồn tại trong hệ thống!");
+        }
         Optional<Customers> customersOptional = customersRepository.findById(id);
         if (customersOptional.isPresent()) {
             customersRepository.deleteById(id);
             return modelMapper.map(customersOptional, CustomersDTO.class);
         }
-        throw new RuntimeException("Có lỗi xảy ra trong quá trình xóa khách hàng");
-//        return null;
+        throw new RuntimeException("Có lỗi xảy ra trong quá trình xóa khách hàng!");
     }
 
 //    @Override

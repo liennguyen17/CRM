@@ -45,7 +45,7 @@ public class CustomerStatusController extends BaseController {
 
 
     @GetMapping("/{id}")
-    ResponseEntity<?> getById(@PathVariable Long id) {
+    ResponseEntity<?> getById(@PathVariable String id) {
         try {
             CustomerStatusDTO response = customerStatusService.getById(id);
             return buildItemResponse(response);
@@ -80,12 +80,8 @@ public class CustomerStatusController extends BaseController {
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteById(@PathVariable Long id) {
-        try {
             CustomerStatusDTO response = customerStatusService.deleteById(id);
             return buildItemResponse(response);
-        } catch (Exception ex) {
-            return buildResponse();
-        }
     }
 
     @DeleteMapping("/deleteAll")

@@ -14,7 +14,7 @@ import java.util.List;
 public interface UserService {
     List<UserDTO> getAll();
 
-    UserDTO getById(Long id);
+    UserDTO getById(String idStr);
 
     UserDTO createUser(CreateUserRequest request) throws ParseException;
 
@@ -24,5 +24,5 @@ public interface UserService {
 
     List<UserDTO> deleteAllId(List<Long> ids);
 
-    Page<User> filterUser(FilterUserRequest request, Date dateFrom, Date dateTo);
+    Page<User> filterUser(FilterUserRequest request, Date dateFrom, Date dateTo, Date dateOfBirthFrom, Date dateOfBirthTo);
 }

@@ -7,6 +7,7 @@ import com.example.democrm.repository.CustomerStatusRepository;
 import com.example.democrm.request.customerstatus.CreateCustomerStatusRequest;
 import com.example.democrm.request.customerstatus.FilterCustomerStatusRequest;
 import com.example.democrm.request.customerstatus.UpdateCustomerStatusRequest;
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,7 +31,6 @@ public class CustomerStatusServiceImpl implements CustomerStatusService {
         this.customerStatusRepository = customerStatusRepository;
     }
 
-
     @Override
     public List<CustomerStatusDTO> getAll() {
         return customerStatusRepository.findAll().stream().map(
@@ -39,23 +39,42 @@ public class CustomerStatusServiceImpl implements CustomerStatusService {
     }
 
     @Override
-    public CustomerStatusDTO getById(Long id) {
-        return modelMapper.map(customerStatusRepository.findById(id), CustomerStatusDTO.class);
+    public CustomerStatusDTO getById(String idStr) {
+        Long id;
+        try {
+            id = Long.parseLong(idStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Tham số truyền vào không hợp lệ");
+        }
+        Optional<CustomerStatus> customerStatus = customerStatusRepository.findById(id);
+        if(customerStatus.isPresent()){
+            return modelMapper.map(customerStatus.get(), CustomerStatusDTO.class);
+        }else {
+            throw new RuntimeException("Id trạng thái nguời dùng không tồn tại trong hệ thống!");
+        }
     }
 
     @Override
     @Transactional
     public CustomerStatusDTO createCustomerStatus(CreateCustomerStatusRequest request) {
-        CustomerStatus customerStatus = CustomerStatus.builder()
-                .statusName(request.getStatusName())
-                .build();
-        customerStatus = customerStatusRepository.saveAndFlush(customerStatus);
-        return modelMapper.map(customerStatus, CustomerStatusDTO.class);
+        try{
+            CustomerStatus customerStatus = CustomerStatus.builder()
+                    .statusName(request.getStatusName())
+                    .build();
+            customerStatus = customerStatusRepository.saveAndFlush(customerStatus);
+            return modelMapper.map(customerStatus, CustomerStatusDTO.class);
+        }catch (Exception ex){
+            throw new RuntimeException("Có lỗi xảy ra trong quá trình tạo người dùng mới");
+        }
+
     }
 
     @Override
     @Transactional
     public CustomerStatusDTO updateCustomerStatusById(UpdateCustomerStatusRequest request, Long id) {
+        if(!customerStatusRepository.existsById(id)){
+            throw new EntityNotFoundException("Trạng thái có id:" + id + " cần cập nhật không tồn tại trong hệ thống!");
+        }
         Optional<CustomerStatus> customerStatus = customerStatusRepository.findById(id);
         if (customerStatus.isPresent()) {
             customerStatusRepository.findById(id).stream().map(
@@ -72,13 +91,15 @@ public class CustomerStatusServiceImpl implements CustomerStatusService {
     @Override
     @Transactional
     public CustomerStatusDTO deleteById(Long id) {
+        if(!customerStatusRepository.existsById(id)){
+            throw new EntityNotFoundException("Trạng thái có id:"+ id + "cần xóa không tồn tại trong hệ thống!");
+        }
         Optional<CustomerStatus> customerStatus = customerStatusRepository.findById(id);
         if (customerStatus.isPresent()) {
             customerStatusRepository.deleteById(id);
             return modelMapper.map(customerStatus, CustomerStatusDTO.class);
         }
         throw new RuntimeException("Có lỗi xảy ra trong quá trình xóa trạng thái");
-//        return null;
     }
 
     @Override

@@ -12,7 +12,7 @@ import java.util.List;
 public interface CustomerStatusService {
     List<CustomerStatusDTO> getAll();
 
-    CustomerStatusDTO getById(Long id);
+    CustomerStatusDTO getById(String idStr);
 
     CustomerStatusDTO createCustomerStatus(CreateCustomerStatusRequest request);
 

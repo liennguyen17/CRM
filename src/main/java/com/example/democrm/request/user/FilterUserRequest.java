@@ -14,6 +14,10 @@ public class FilterUserRequest {
     private String dateFrom;
     @DateValidateAnnotation(message = "DateTo phải có định dạng dd/MM/yyyy")
     private String dateTo;
+    @DateValidateAnnotation(message = "DateOfBirthFrom phải có định dạng dd/MM/yyyy")
+    private String DateOfBirthFrom;
+    @DateValidateAnnotation(message = "DateOfBirthTo phải có định dạng dd/MM/yyyy")
+    private String DateOfBirthTo;
     private String userName;
     private String email;
     private String address;

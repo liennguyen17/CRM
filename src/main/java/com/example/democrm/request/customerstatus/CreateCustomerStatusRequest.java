@@ -7,8 +7,8 @@ import lombok.Data;
 
 @Data
 public class CreateCustomerStatusRequest {
-    @NotBlank(message = "Tên trạng thái không được để trống")
-    @Size(min = 5, message = "Tên trạng thái tối thiểu 5 kí tự")
-    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Tên trạng thái không được chứa ký tự đặc biệt!")
+    @NotBlank(message = "Tên trạng thái không được để trống!")
+    @Size(min = 5,max = 100, message = "Tên trạng thái phải có ít nhất 5, nhiều nhất 100 kí tự!")
+    @Pattern(regexp = "^([\\p{L}\\d_]+)$", message = "Tên trạng thái không được chứa ký tự đặc biệt!")
     private String statusName;
 }

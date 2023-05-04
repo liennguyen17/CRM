@@ -11,8 +11,8 @@ public class UpdateCustomerStatusRequest {
 //    @NotNull(message = "Id không được để trống")
 //    private Long statusId;
 
-    @Size(min = 5, message = "statusName tối thiểu 5 kí tự")
-    @NotBlank(message = "statusName không được để trống")
-    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Tên trạng thái không được chứa ký tự đặc biệt!")
+    @Size(min = 5, max = 100, message = "Tên trạng thái phải có ít nhất 5, nhiều nhất 100 kí tự!")
+    @NotBlank(message = "statusName không được để trống!")
+    @Pattern(regexp = "^([\\p{L}\\d_]+)$", message = "Tên trạng thái không được chứa ký tự đặc biệt!")
     private String statusName;
 }

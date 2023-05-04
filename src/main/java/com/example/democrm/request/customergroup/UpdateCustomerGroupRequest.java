@@ -9,11 +9,11 @@ import lombok.Data;
 
 @Data
 public class UpdateCustomerGroupRequest {
-    @NotBlank(message = "Tên nhóm khách hàng không được để trống")
-    @Size(min = 6, max = 100, message = "Tên phải có ít nhất 6, nhiều nhất 100 kí tự!")
-    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Tên nhóm khách hàng không được chứa ký tự đặc biệt!")
+    @NotBlank(message = "Tên nhóm khách hàng không được để trống!")
+    @Size(min = 6, max = 100, message = "Tên nhóm khách hàng phải có ít nhất 6, nhiều nhất 100 kí tự!")
+    @Pattern(regexp = "^([\\p{L}\\d_]+)$", message = "Tên nhóm khách hàng không được chứa ký tự đặc biệt!")
     private String groupName;
-    @NotNull(message = "User_id không được để trống")
+    @NotNull(message = "User_id không được để trống!")
     private Long userId;
 
 }

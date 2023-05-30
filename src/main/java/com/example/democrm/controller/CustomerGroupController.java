@@ -60,7 +60,7 @@ public class CustomerGroupController extends BaseController {
 
 
     @PostMapping("")
-    @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_GROUP_CUSTOMER')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_GROUP_CUSTOMER')")
     ResponseEntity<?> create(@Valid @RequestBody CreateCustomerGroupRequest request) {
         CustomerGroupDTO response = customerGroupService.createGroup(request);
         return buildItemResponse(response);
@@ -68,7 +68,7 @@ public class CustomerGroupController extends BaseController {
 
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_GROUP_CUSTOMER')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_GROUP_CUSTOMER')")
     ResponseEntity<?> update(@Validated @RequestBody UpdateCustomerGroupRequest request,
                              @PathVariable("id") Long id) {
         CustomerGroupDTO response = customerGroupService.updateGroup(request, id);
@@ -77,15 +77,15 @@ public class CustomerGroupController extends BaseController {
 
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_GROUP_CUSTOMER')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_GROUP_CUSTOMER')")
     ResponseEntity<?> deleteById(@PathVariable Long id) {
-            CustomerGroupDTO response = customerGroupService.deleteById(id);
-            return buildItemResponse(response);
+        CustomerGroupDTO response = customerGroupService.deleteById(id);
+        return buildItemResponse(response);
     }
 
 
     @DeleteMapping("/delete/all")
-    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_GROUP_CUSTOMER')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_GROUP_CUSTOMER')")
     ResponseEntity<?> deleteAllId(@RequestBody List<Long> ids) {
         try {
             List<CustomerGroupDTO> response = customerGroupService.deleteAllId(ids);

@@ -2,6 +2,8 @@ package com.example.democrm.controller;
 
 import com.example.democrm.constant.DateTimeConstant;
 import com.example.democrm.constant.ErrorCodeDefs;
+import com.example.democrm.dto.CustomerGroupDTO;
+import com.example.democrm.dto.CustomersDTO;
 import com.example.democrm.dto.UserDTO;
 import com.example.democrm.etity.User;
 import com.example.democrm.request.user.CreateUserRequest;
@@ -48,19 +50,19 @@ public class UserController extends BaseController {
     @GetMapping("/{id}")
 //    @PreAuthorize("hasAnyAuthority('ADMIN')")
     ResponseEntity<?> getById(@PathVariable String id) {
-            UserDTO response = userService.getById(id);
-            return buildItemResponse(response);
+        UserDTO response = userService.getById(id);
+        return buildItemResponse(response);
     }
 
     @PostMapping("")
-    @PreAuthorize("hasAnyAuthority('CREATE_USER','ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('CREATE_USER','ADMIN')")
     ResponseEntity<?> creatUser(@Valid @RequestBody CreateUserRequest request) throws ParseException {
         UserDTO response = userService.createUser(request);
         return buildItemResponse(response);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('UPDATE_USER', 'ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('UPDATE_USER', 'ADMIN')")
     ResponseEntity<?> update(@Validated @RequestBody UpdateUserRequest request,
                              @PathVariable("id") Long id) throws ParseException {
         UserDTO response = userService.update(request, id);
@@ -68,16 +70,16 @@ public class UserController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_USER')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_USER')")
     ResponseEntity<?> deleteById(@PathVariable Long id) {
         UserDTO response = userService.deleteById(id);
         return buildItemResponse(response);
     }
 
     @DeleteMapping("/delete/all")
-    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_USER')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_USER')")
     ResponseEntity<?> deleteAllId(@RequestBody List<Long> ids) {
-        try{
+        try {
             List<UserDTO> response = userService.deleteAllId(ids);
             return buildListItemResponse(response, response.size());
         } catch (Exception ex) {
@@ -86,7 +88,7 @@ public class UserController extends BaseController {
     }
 
     @PostMapping("/filter")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<?> filterUser(@Validated @RequestBody FilterUserRequest request) throws ParseException {
         Page<User> userPage = userService.filterUser(
                 request,
@@ -100,5 +102,25 @@ public class UserController extends BaseController {
         ).collect(Collectors.toList());
         return buildListItemResponse(userDTOS, userPage.getTotalElements());
     }
+
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @GetMapping("/manager-group")
+    ResponseEntity<?> getUserManagedCustomerGroups() {
+        List<CustomerGroupDTO> customerGroupDTOs = userService.getUserManagedCustomerGroups();
+        return buildListItemResponse(customerGroupDTOs, customerGroupDTOs.size());
+    }
+
+    @GetMapping("/manager-customer")
+    ResponseEntity<?> getUserManagedCustomer(){
+        List<CustomersDTO> customersDTOList = userService.getUserManagedCustomer();
+        return buildListItemResponse(customersDTOList, customersDTOList.size());
+    }
+
+    @GetMapping("/manager-customers")
+    ResponseEntity<?> getUserManagedCustomers(){
+        List<CustomersDTO> customersDTOList = userService.getUserManagedCustomers();
+        return buildListItemResponse(customersDTOList, customersDTOList.size());
+    }
+
 
 }

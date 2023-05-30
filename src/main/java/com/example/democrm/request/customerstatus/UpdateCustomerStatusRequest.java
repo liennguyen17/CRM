@@ -13,6 +13,6 @@ public class UpdateCustomerStatusRequest {
 
     @Size(min = 5, max = 100, message = "Tên trạng thái phải có ít nhất 5, nhiều nhất 100 kí tự!")
     @NotBlank(message = "statusName không được để trống!")
-    @Pattern(regexp = "^([\\p{L}\\d_]+)$", message = "Tên trạng thái không được chứa ký tự đặc biệt!")
+//    @Pattern(regexp = "^([\\p{L}\\d_]+)$", message = "Tên trạng thái không được chứa ký tự đặc biệt!")
     private String statusName;
 }

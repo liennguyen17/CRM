@@ -9,8 +9,8 @@ import lombok.Data;
 @Data
 public class UpdatePermissionRequest {
     @NotBlank(message = "Tên quyền không được để trống!")
-    @Size(min = 5,max = 100, message = "Tên quyền phải có ít nhất 5, nhiều nhất 100 kí tự!")
-    @Pattern(regexp = "^([\\p{L}\\d_]+)$", message = "Tên quyền không được chứa ký tự đặc biệt!")
+    @Size(min = 5, max = 100, message = "Tên quyền phải có ít nhất 5, nhiều nhất 100 kí tự!")
+//    @Pattern(regexp = "^([\\p{L}\\d_]+)$", message = "Tên quyền không được chứa ký tự đặc biệt!")
     private String permissionName;
     @NotBlank(message = "Mô tả quyền không được để trống!")
     private String description;

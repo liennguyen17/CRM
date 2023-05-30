@@ -16,7 +16,8 @@ import java.sql.Timestamp;
 public class UserDTO {
     private Long userId;
     private String userName;
-    @JsonFormat(pattern = DateTimeConstant.DATE_TIME_FORMAT, timezone = DateTimeConstant.TIME_ZONE)
+//    private String password;
+    @JsonFormat(pattern = DateTimeConstant.DATE_FORMAT, timezone = DateTimeConstant.TIME_ZONE)
     private Timestamp date;
     private String email;
     private String address;
@@ -26,4 +27,6 @@ public class UserDTO {
     private Timestamp updateDate;
     private Boolean isSuperAdmin = false;
     private Role1DTO role;
+
+
 }

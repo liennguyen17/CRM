@@ -1,6 +1,9 @@
 package com.example.democrm.service;
 
+import com.example.democrm.dto.CustomerGroupDTO;
+import com.example.democrm.dto.CustomersDTO;
 import com.example.democrm.dto.UserDTO;
+import com.example.democrm.etity.CustomerGroup;
 import com.example.democrm.etity.User;
 import com.example.democrm.request.user.CreateUserRequest;
 import com.example.democrm.request.user.FilterUserRequest;
@@ -25,4 +28,10 @@ public interface UserService {
     List<UserDTO> deleteAllId(List<Long> ids);
 
     Page<User> filterUser(FilterUserRequest request, Date dateFrom, Date dateTo, Date dateOfBirthFrom, Date dateOfBirthTo);
+
+    List<CustomerGroupDTO> getUserManagedCustomerGroups();
+
+    List<CustomersDTO> getUserManagedCustomer();
+
+    List<CustomersDTO> getUserManagedCustomers();
 }

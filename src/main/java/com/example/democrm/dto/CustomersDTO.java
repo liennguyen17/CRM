@@ -24,7 +24,9 @@ public class CustomersDTO {
     private String email;
     private String note;
     private String address;
+    private User1DTO user;
     private CustomerStatusDTO status;
     private CustomerGroupDTO group;
+
 
 }

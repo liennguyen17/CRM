@@ -80,8 +80,8 @@ public class CustomerStatusController extends BaseController {
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteById(@PathVariable Long id) {
-            CustomerStatusDTO response = customerStatusService.deleteById(id);
-            return buildItemResponse(response);
+        CustomerStatusDTO response = customerStatusService.deleteById(id);
+        return buildItemResponse(response);
     }
 
     @DeleteMapping("/deleteAll")

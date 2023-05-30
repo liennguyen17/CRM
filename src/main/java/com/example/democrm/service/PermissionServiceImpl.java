@@ -49,7 +49,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public PermissionDTO create(CreatePermissionRequest request) {
-        try{
+        try {
             Permission permission = Permission.builder()
                     .permissionId(request.getPermissionId())
                     .permissionName(request.getPermissionName())
@@ -58,7 +58,7 @@ public class PermissionServiceImpl implements PermissionService {
                     .build();
             permission = permissionRepository.saveAndFlush(permission);
             return modelMapper.map(permission, PermissionDTO.class);
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             throw new RuntimeException("Có lỗi xảy ra trong quá trình tạo mới quyền!");
         }
 
@@ -66,7 +66,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public PermissionDTO update(UpdatePermissionRequest request, String id) {
-        if(!permissionRepository.existsById(id)){
+        if (!permissionRepository.existsById(id)) {
             throw new EntityNotFoundException("Quyền có id:" + id + " cần cập nhật không tồn tại trong hệ thống!");
         }
         Optional<Permission> permissionOptional = permissionRepository.findById(id);
@@ -82,7 +82,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public PermissionDTO deleteById(String id) {
-        if (!permissionRepository.existsById(id)){
+        if (!permissionRepository.existsById(id)) {
             throw new EntityNotFoundException("Quyền có id:" + id + " cần xóa không tồn tại trong hệ thống!");
         }
         Optional<Permission> permissionOptional = permissionRepository.findById(id);

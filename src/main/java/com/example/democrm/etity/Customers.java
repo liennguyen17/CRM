@@ -27,6 +27,9 @@ public class Customers {
     @ManyToOne
     @JoinColumn(name = "customer_group_id")
     private CustomerGroup customerGroup;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     @Column(name = "created_date")
     private Timestamp createdDate;
     @Column(name = "update_date")
@@ -39,4 +42,6 @@ public class Customers {
     private String note;
     @Column(name = "address")
     private String address;
+
+
 }

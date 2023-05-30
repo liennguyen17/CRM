@@ -47,9 +47,9 @@ public class CustomerStatusServiceImpl implements CustomerStatusService {
             throw new IllegalArgumentException("Tham số truyền vào không hợp lệ");
         }
         Optional<CustomerStatus> customerStatus = customerStatusRepository.findById(id);
-        if(customerStatus.isPresent()){
+        if (customerStatus.isPresent()) {
             return modelMapper.map(customerStatus.get(), CustomerStatusDTO.class);
-        }else {
+        } else {
             throw new RuntimeException("Id trạng thái nguời dùng không tồn tại trong hệ thống!");
         }
     }
@@ -57,13 +57,13 @@ public class CustomerStatusServiceImpl implements CustomerStatusService {
     @Override
     @Transactional
     public CustomerStatusDTO createCustomerStatus(CreateCustomerStatusRequest request) {
-        try{
+        try {
             CustomerStatus customerStatus = CustomerStatus.builder()
                     .statusName(request.getStatusName())
                     .build();
             customerStatus = customerStatusRepository.saveAndFlush(customerStatus);
             return modelMapper.map(customerStatus, CustomerStatusDTO.class);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             throw new RuntimeException("Có lỗi xảy ra trong quá trình tạo người dùng mới");
         }
 
@@ -72,7 +72,7 @@ public class CustomerStatusServiceImpl implements CustomerStatusService {
     @Override
     @Transactional
     public CustomerStatusDTO updateCustomerStatusById(UpdateCustomerStatusRequest request, Long id) {
-        if(!customerStatusRepository.existsById(id)){
+        if (!customerStatusRepository.existsById(id)) {
             throw new EntityNotFoundException("Trạng thái có id:" + id + " cần cập nhật không tồn tại trong hệ thống!");
         }
         Optional<CustomerStatus> customerStatus = customerStatusRepository.findById(id);
@@ -91,8 +91,8 @@ public class CustomerStatusServiceImpl implements CustomerStatusService {
     @Override
     @Transactional
     public CustomerStatusDTO deleteById(Long id) {
-        if(!customerStatusRepository.existsById(id)){
-            throw new EntityNotFoundException("Trạng thái có id:"+ id + "cần xóa không tồn tại trong hệ thống!");
+        if (!customerStatusRepository.existsById(id)) {
+            throw new EntityNotFoundException("Trạng thái có id:" + id + "cần xóa không tồn tại trong hệ thống!");
         }
         Optional<CustomerStatus> customerStatus = customerStatusRepository.findById(id);
         if (customerStatus.isPresent()) {

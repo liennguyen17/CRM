@@ -23,6 +23,9 @@ public class CustomRoleRepository {
             if (StringUtils.hasText(request.getRoleName())) {
                 predicates.add(criteriaBuilder.like(root.get("roleName"), "%" + request.getRoleName() + "%"));
             }
+            if (StringUtils.hasText(request.getDescriptionRole())) {
+                predicates.add(criteriaBuilder.like(root.get("descriptionRole"), "%" + request.getDescriptionRole() + "%"));
+            }
             if (request.getStatus() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("status"), request.getStatus()));
             }

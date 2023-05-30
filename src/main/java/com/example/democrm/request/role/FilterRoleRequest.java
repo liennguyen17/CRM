@@ -16,4 +16,5 @@ public class FilterRoleRequest {
     private String dateTo;
     private String roleName;
     private Boolean status;
+    private String descriptionRole;
 }

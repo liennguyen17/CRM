@@ -1,12 +1,14 @@
 package com.example.democrm.service;
 
 import com.example.democrm.constant.DateTimeConstant;
+import com.example.democrm.dto.CustomerGroupDTO;
+import com.example.democrm.dto.CustomersDTO;
 import com.example.democrm.dto.UserDTO;
+import com.example.democrm.etity.CustomerGroup;
+import com.example.democrm.etity.Customers;
 import com.example.democrm.etity.Role;
 import com.example.democrm.etity.User;
-import com.example.democrm.repository.CustomUserRepository;
-import com.example.democrm.repository.RoleRepository;
-import com.example.democrm.repository.UserRepository;
+import com.example.democrm.repository.*;
 import com.example.democrm.request.user.CreateUserRequest;
 import com.example.democrm.request.user.FilterUserRequest;
 import com.example.democrm.request.user.UpdateUserRequest;
@@ -17,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,13 +38,17 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final CustomerGroupRepository customerGroupRepository;
+    private final CustomersRepository customersRepository;
     private final PasswordEncoder encoder;
     private final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, CustomerGroupRepository customerGroupRepository, CustomersRepository customersRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.customerGroupRepository = customerGroupRepository;
+        this.customersRepository = customersRepository;
         this.encoder = encoder;
     }
 
@@ -87,7 +95,7 @@ public class UserServiceImpl implements UserService {
             user.setRole(buildRole(roleOptional.get().getRoleId()));    //lay ra id cua role_sau r se thu xem get dc name ko
             user = userRepository.saveAndFlush(user);
             return modelMapper.map(user, UserDTO.class);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             throw new RuntimeException("Có lỗi xảy ra trong quá trình tạo người dùng mới");
         }
     }
@@ -95,9 +103,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO update(UpdateUserRequest request, Long id) throws ParseException {
-        checkUserIsExistByName(request.getUserName(), request.getId());
+        checkUserIsExistByName(request.getUserName(), id);
         checkRoleIsValid(request.getRoleId());
-        validateUserExist(request.getId());
+        validateUserExist(id);
         Optional<User> userOptional = userRepository.findById(id);
         Optional<Role> roleOptional = roleRepository.findById(request.getRoleId());
         if (userOptional.isPresent()) {
@@ -118,8 +126,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO deleteById(Long id) {
-        if(!userRepository.existsById(id)){
-            throw new EntityNotFoundException("Người dùng có id:"+ id + " cần xóa không tồn tại trong hệ thống!");
+        if (!userRepository.existsById(id)) {
+            throw new EntityNotFoundException("Người dùng có id:" + id + " cần xóa không tồn tại trong hệ thống!");
         }
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
@@ -141,11 +149,86 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> filterUser(FilterUserRequest request, Date dateFrom, Date dateTo,Date dateOfBirthFrom, Date dateOfBirthTo) {
-        Specification<User> specification = CustomUserRepository.filterSpecification(dateFrom, dateTo, dateOfBirthFrom, dateOfBirthTo,request);
+    public Page<User> filterUser(FilterUserRequest request, Date dateFrom, Date dateTo, Date dateOfBirthFrom, Date dateOfBirthTo) {
+        Specification<User> specification = CustomUserRepository.filterSpecification(dateFrom, dateTo, dateOfBirthFrom, dateOfBirthTo, request);
         Page<User> userPage = userRepository.findAll(specification, PageRequest.of(request.getStart(), request.getLimit()));
         return userPage;
     }
+
+    //thống kê user quản lý những nhóm nào
+    @Override
+    public List<CustomerGroupDTO> getUserManagedCustomerGroups() {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String loggedInUsername = authentication.getName();
+
+            User loggedUsers = userRepository.getUserByUserName(loggedInUsername);
+
+            List<CustomerGroup> managedCustomerGroups = customerGroupRepository.getAllByUser_UserId(loggedUsers.getUserId());
+
+            List<CustomerGroupDTO> customerGroupDTOS = managedCustomerGroups.stream()
+                    .map(customerGroup -> modelMapper.map(customerGroup, CustomerGroupDTO.class))
+                    .collect(Collectors.toList());
+            return customerGroupDTOS;
+        }catch (Exception ex){
+            throw new RuntimeException("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.");
+        }
+    }
+
+    //thống kê user quản lý số khách hàng thuộc nhóm đang quản lý
+    @Override
+    public List<CustomersDTO> getUserManagedCustomer() {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String loggedInUsername = authentication.getName();
+
+            User loggedUsers = userRepository.getUserByUserName(loggedInUsername);
+
+            //lấy ra các nhóm khách hàng có id do user đó quản lý
+            List<CustomerGroup> managedCustomerGroups = customerGroupRepository.getAllByUser_UserId(loggedUsers.getUserId());
+
+            List<Customers> customers = new ArrayList<>();
+
+            //từ danh sách các nhóm lấy ra các khách hàng thuộc nhóm trên
+            for (CustomerGroup group : managedCustomerGroups) {
+                List<Customers> managerCustomer = customersRepository.findAllByCustomerGroup_CustomerGroupId(group.getCustomerGroupId());
+                customers.addAll(managerCustomer);
+            }
+
+            List<CustomersDTO> customersDTOList = customers.stream()
+                    .map(managedCustomer -> modelMapper.map(managedCustomer, CustomersDTO.class))
+                    .collect(Collectors.toList());
+            return customersDTOList;
+        }catch (Exception ex){
+            throw new RuntimeException("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.");
+        }
+
+    }
+
+    //thống kê nhân viên(user) quản lý khách hàng của nhân viên đó
+    @Override
+    public List<CustomersDTO> getUserManagedCustomers(){
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String loggedInUsername = authentication.getName();
+            User loggedUsers = userRepository.getUserByUserName(loggedInUsername);
+            //lấy ra khách hàng do nhân viên đó quản lý
+            List<Customers> managedCustomers = customersRepository.findAllByUser_UserId(loggedUsers.getUserId());
+            List<CustomersDTO> customersDTOList = managedCustomers.stream()
+                    .map(customers -> modelMapper.map(customers, CustomersDTO.class))
+                    .collect(Collectors.toList());
+            return customersDTOList;
+        }catch(Exception ex){
+            throw new RuntimeException("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.");
+        }
+
+
+    }
+
+
+
+
+
 
 
     private void checkUserIsExistByName(String name, Long id) {

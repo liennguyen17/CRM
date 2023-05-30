@@ -11,7 +11,7 @@ import lombok.Data;
 public class UpdateCustomerGroupRequest {
     @NotBlank(message = "Tên nhóm khách hàng không được để trống!")
     @Size(min = 6, max = 100, message = "Tên nhóm khách hàng phải có ít nhất 6, nhiều nhất 100 kí tự!")
-    @Pattern(regexp = "^([\\p{L}\\d_]+)$", message = "Tên nhóm khách hàng không được chứa ký tự đặc biệt!")
+//    @Pattern(regexp = "^([\\p{L}\\d_]+)$", message = "Tên nhóm khách hàng không được chứa ký tự đặc biệt!")
     private String groupName;
     @NotNull(message = "User_id không được để trống!")
     private Long userId;

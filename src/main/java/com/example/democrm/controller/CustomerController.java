@@ -84,7 +84,7 @@ public class CustomerController extends BaseController {
     @DeleteMapping("/delete/all")
 //    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_CUSTOMER')")
     ResponseEntity<?> deleteAllId(@RequestBody List<Long> ids) {
-        try{
+        try {
             List<CustomersDTO> response = customersService.deleteList(ids);
             return buildListItemResponse(response, response.size());
         } catch (Exception ex) {

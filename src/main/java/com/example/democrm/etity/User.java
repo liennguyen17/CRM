@@ -56,6 +56,10 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Customers> customers;
+
+
     //tra ve danh sach doi tuong GrantedAuthority cho nguoi dung dang duoc xac thuc
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();

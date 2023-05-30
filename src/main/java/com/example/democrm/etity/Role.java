@@ -33,6 +33,9 @@ public class Role {
     @Column(name = "status")
     private Boolean status;
 
+    @Column(name = "description_role")
+    private String descriptionRole;
+
     @OneToMany(mappedBy = "role")
     private Set<User> users;
 

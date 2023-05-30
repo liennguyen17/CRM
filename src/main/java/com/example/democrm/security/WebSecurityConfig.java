@@ -70,11 +70,13 @@ public class WebSecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/test/**").authenticated()
                 .requestMatchers("/customer/**").permitAll()
-                .anyRequest().authenticated();
+                .requestMatchers("/user/**").permitAll()
+//                .requestMatchers("/user/manager-group").authenticated()
+//                .anyRequest().authenticated();
 
 //                .antMatchers("/auth/**").permitAll()
 //                .antMatchers("/test/**").authenticated()
-//                .anyRequest().permitAll();  // tạm thời ko xét quyền để call thử, sau khi xong xét lại quyền như cũ  .anyRequest().authenticated();
+                .anyRequest().permitAll();  // tạm thời ko xét quyền để call thử, sau khi xong xét lại quyền như cũ  .anyRequest().authenticated();
 
 
         http.authenticationProvider(authenticationProvider());

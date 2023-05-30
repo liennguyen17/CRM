@@ -22,5 +22,6 @@ public class RoleDTO {
     @JsonFormat(pattern = DateTimeConstant.DATE_TIME_FORMAT, timezone = DateTimeConstant.TIME_ZONE)
     private Timestamp updateDate;
     private Boolean status;
+    private String descriptionRole;
     private Set<PermissionDTO> permissions;
 }

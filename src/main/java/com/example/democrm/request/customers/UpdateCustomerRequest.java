@@ -9,12 +9,13 @@ public class UpdateCustomerRequest {
 //    private Long customerId;
     @NotBlank(message = "Tên khách hàng không được để trống!")
     @Size(min = 6, max = 100, message = "Tên khách hàng phải có ít nhất 6, nhiều nhất 100 kí tự!")
-    @Pattern(regexp = "^[\\p{L}\\d_\\s]+$", message = "Tên khách hàng không được chứa ký tự đặc biệt!")
+//    @Pattern(regexp = "^[\\p{L}\\d_\\s]+$", message = "Tên khách hàng không được chứa ký tự đặc biệt!")
     private String customerName;
     @NotBlank(message = "Số điện thoại không được để trống!")
     private String phone;
     @NotBlank(message = "Email không được để trống!")
-    @Email(message = "Email không hợp lệ!")
+//    @Email(message = "Email không hợp lệ!")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Email không hợp lệ!")
     private String email;
     @NotBlank(message = "Ghi chú không được để trống!")
     private String note;

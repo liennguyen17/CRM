@@ -24,7 +24,7 @@ public class CustomUserRepository {
             if (dateFrom != null && dateTo != null) {
                 predicates.add(criteriaBuilder.between(root.get("createdDate"), dateFrom, dateTo));
             }
-            if(dateOfBirthFrom != null && dateOfBirthTo != null){
+            if (dateOfBirthFrom != null && dateOfBirthTo != null) {
                 predicates.add(criteriaBuilder.between(root.get("date"), dateOfBirthFrom, dateOfBirthTo));
             }
             if (StringUtils.hasText(request.getUserName())) {

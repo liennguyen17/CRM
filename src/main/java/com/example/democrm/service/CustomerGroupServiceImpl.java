@@ -64,16 +64,16 @@ public class CustomerGroupServiceImpl implements CustomerGroupService {
     @Transactional
     public CustomerGroupDTO createGroup(CreateCustomerGroupRequest request) {
         try {
-        Optional<User> userOptional = userRepository.findById(request.getUserId());
-        CustomerGroup customerGroup = CustomerGroup.builder()
-                .groupName(request.getGroupName())
-                .createdDate(new Timestamp(System.currentTimeMillis()))
-                .updateDate(new Timestamp(System.currentTimeMillis()))
-                .build();
-        customerGroup.setUser(userOptional.get());
-        customerGroup = customerGroupRepository.saveAndFlush(customerGroup);
-        return modelMapper.map(customerGroup, CustomerGroupDTO.class);
-        } catch (Exception ex){
+            Optional<User> userOptional = userRepository.findById(request.getUserId());
+            CustomerGroup customerGroup = CustomerGroup.builder()
+                    .groupName(request.getGroupName())
+                    .createdDate(new Timestamp(System.currentTimeMillis()))
+                    .updateDate(new Timestamp(System.currentTimeMillis()))
+                    .build();
+            customerGroup.setUser(userOptional.get());
+            customerGroup = customerGroupRepository.saveAndFlush(customerGroup);
+            return modelMapper.map(customerGroup, CustomerGroupDTO.class);
+        } catch (Exception ex) {
             throw new RuntimeException("Có lỗi xảy ra trong quá trình tạo nhóm khách hàng mới!");
         }
     }
@@ -81,8 +81,8 @@ public class CustomerGroupServiceImpl implements CustomerGroupService {
     @Override
     @Transactional
     public CustomerGroupDTO updateGroup(UpdateCustomerGroupRequest request, Long id) {
-        if(!customerGroupRepository.existsById(id)){
-            throw new EntityNotFoundException("Nhóm khách hàng có id:"+ id + " cần cập nhật không tồn tại trong hệ thống!");
+        if (!customerGroupRepository.existsById(id)) {
+            throw new EntityNotFoundException("Nhóm khách hàng có id:" + id + " cần cập nhật không tồn tại trong hệ thống!");
         }
         Optional<CustomerGroup> customerGroupOptional = customerGroupRepository.findById(id);
         Optional<User> userOptional = userRepository.findById(request.getUserId());
@@ -103,7 +103,7 @@ public class CustomerGroupServiceImpl implements CustomerGroupService {
     @Override
     @Transactional
     public CustomerGroupDTO deleteById(Long id) {
-        if(!customerGroupRepository.existsById(id)){
+        if (!customerGroupRepository.existsById(id)) {
             throw new EntityNotFoundException("Nhóm khách hàng có id:" + id + " cần xóa không tồn tại trong hệ thống!");
         }
         Optional<CustomerGroup> customerGroup = customerGroupRepository.findById(id);

@@ -62,20 +62,21 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public RoleDTO createRole(CreateRoleRequest request) {
-        try{
+        try {
             checkPermissionIsValid(request.getPermissionIds());
             Role role = Role.builder()
                     .roleName(request.getRoleName())
                     .createdDate(new Timestamp(System.currentTimeMillis()))
                     .updateDate(new Timestamp(System.currentTimeMillis()))
                     .status(request.getStatus())
+                    .descriptionRole(request.getDescriptionRole())
                     .build();
             List<Permission> permissions = buildPermission(request.getPermissionIds());
             role.setPermissions(permissions);
 
             role = roleRepository.saveAndFlush(role);
             return modelMapper.map(role, RoleDTO.class);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             throw new RuntimeException("Có lỗi xảy ra trong quá trình tạo vai trò mới!");
         }
     }
@@ -83,7 +84,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public RoleDTO update(UpdateRoleRequest request, Long id) {
         checkPermissionIsValid(request.getPermissionIds());
-        validateRoleExist(request.getRoleId());
+        validateRoleExist(id);
         Optional<Role> roleOptional = roleRepository.findById(id);
         if (roleOptional.isPresent()) {
             List<Permission> permissions = buildPermission(request.getPermissionIds());
@@ -92,6 +93,7 @@ public class RoleServiceImpl implements RoleService {
             role.setUpdateDate(new Timestamp(System.currentTimeMillis()));
             role.setStatus(request.getStatus());
             role.setPermissions(permissions);
+            role.setDescriptionRole(request.getDescriptionRole());
             return modelMapper.map(roleRepository.save(role), RoleDTO.class);
         }
         throw new RuntimeException("Có lỗi xảy ra trong quá trình cập nhật thông tin người dùng");
@@ -101,8 +103,8 @@ public class RoleServiceImpl implements RoleService {
     //xem lai phan xoa vi no se ko map duoc doi tuong chua colection , sua lai nhu file demoCRM tra ve true false
     @Override
     public RoleDTO deleteById(Long id) {
-        if(!roleRepository.existsById(id)){
-            throw new EntityNotFoundException("Vai tro co id:"+ id + " cần xóa không tồn tại trên hệ thống!");
+        if (!roleRepository.existsById(id)) {
+            throw new EntityNotFoundException("Vai tro co id:" + id + " cần xóa không tồn tại trên hệ thống!");
         }
         Optional<Role> roleOptional = roleRepository.findById(id);
         if (roleOptional.isPresent()) {

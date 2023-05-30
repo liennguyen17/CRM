@@ -49,18 +49,18 @@ public class RoleController extends BaseController {
     }
 
     @PostMapping("")
-    @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_ROLE')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_ROLE')")
     ResponseEntity<?> creatRole(@Validated @RequestBody CreateRoleRequest request) {
-            RoleDTO response = roleService.createRole(request);
-            return buildItemResponse(response);
+        RoleDTO response = roleService.createRole(request);
+        return buildItemResponse(response);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_ROLE')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_ROLE')")
     ResponseEntity<?> update(@Validated @RequestBody UpdateRoleRequest request,
                              @PathVariable("id") Long id) {
-            RoleDTO response = roleService.update(request, id);
-            return buildItemResponse(response);
+        RoleDTO response = roleService.update(request, id);
+        return buildItemResponse(response);
     }
 
     //xem lai khi van xoa duoc nhung van nhay vao loi _ tinh sua lai nhu sau
@@ -73,19 +73,19 @@ public class RoleController extends BaseController {
         }
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'DELETE_ROLE')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN', 'DELETE_ROLE')")
     ResponseEntity<?> deleteById(@PathVariable("id") Long id) {
-            RoleDTO response = roleService.deleteById(id);
-            return buildItemResponse(response);
+        RoleDTO response = roleService.deleteById(id);
+        return buildItemResponse(response);
     }
 
     @DeleteMapping("/delete/all")
-    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_ROLE')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_ROLE')")
     ResponseEntity<?> deleteAllId(@RequestBody List<Long> ids) {
-        try{
+        try {
             List<RoleDTO> response = roleService.deleteAllId(ids);
             return buildListItemResponse(response, response.size());
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             return buildResponse();
         }
 

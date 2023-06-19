@@ -30,6 +30,9 @@ public class CustomUserRepository {
             if (StringUtils.hasText(request.getUserName())) {
                 predicates.add(criteriaBuilder.like(root.get("userName"), "%" + request.getUserName() + "%"));
             }
+            if (StringUtils.hasText(request.getName())) {
+                predicates.add(criteriaBuilder.like(root.get("name"), "%" + request.getName() + "%"));
+            }
             if (StringUtils.hasText(request.getEmail())) {
                 predicates.add(criteriaBuilder.equal(root.get("email"), request.getEmail()));
             }

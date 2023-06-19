@@ -4,10 +4,8 @@ import com.example.democrm.dto.CustomersDTO;
 import com.example.democrm.etity.CustomerGroup;
 import com.example.democrm.etity.CustomerStatus;
 import com.example.democrm.etity.Customers;
-import com.example.democrm.repository.CustomCustomerRepository;
-import com.example.democrm.repository.CustomerGroupRepository;
-import com.example.democrm.repository.CustomerStatusRepository;
-import com.example.democrm.repository.CustomersRepository;
+import com.example.democrm.etity.User;
+import com.example.democrm.repository.*;
 import com.example.democrm.request.customers.CreateCustomerRequest;
 import com.example.democrm.request.customers.FilterCustomerRequest;
 import com.example.democrm.request.customers.UpdateCustomerRequest;
@@ -32,13 +30,15 @@ public class CustomersServiceImpl implements CustomersService {
     private final CustomersRepository customersRepository;
     private final CustomerStatusRepository customerStatusRepository;
     private final CustomerGroupRepository customerGroupRepository;
+    private final UserRepository userRepository;
     private final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
-    public CustomersServiceImpl(CustomersRepository customersRepository, CustomerStatusRepository customerStatusRepository, CustomerGroupRepository customerGroupRepository) {
+    public CustomersServiceImpl(CustomersRepository customersRepository, CustomerStatusRepository customerStatusRepository, CustomerGroupRepository customerGroupRepository, UserRepository userRepository) {
         this.customersRepository = customersRepository;
         this.customerStatusRepository = customerStatusRepository;
         this.customerGroupRepository = customerGroupRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -79,6 +79,7 @@ public class CustomersServiceImpl implements CustomersService {
         try {
             Optional<CustomerStatus> customerStatusOptional = customerStatusRepository.findById(request.getStatus());
             Optional<CustomerGroup> customerGroupOptional = customerGroupRepository.findById(request.getGroup());
+            Optional<User> userOptional = userRepository.findById(request.getUser());
             Customers customers = Customers.builder()
                     .customerName(request.getCustomerName())
                     .createdDate(new Timestamp(System.currentTimeMillis()))
@@ -90,6 +91,7 @@ public class CustomersServiceImpl implements CustomersService {
                     .build();
             customers.setCustomerStatus(customerStatusOptional.get());
             customers.setCustomerGroup(customerGroupOptional.get());
+            customers.setUser(userOptional.get());
             customers = customersRepository.saveAndFlush(customers);
             return modelMapper.map(customers, CustomersDTO.class);
         } catch (Exception ex) {
@@ -108,6 +110,7 @@ public class CustomersServiceImpl implements CustomersService {
         Optional<Customers> customersOptional = customersRepository.findById(id);
         Optional<CustomerStatus> customerStatusOptional = customerStatusRepository.findById(request.getStatus());
         Optional<CustomerGroup> customerGroupOptional = customerGroupRepository.findById(request.getGroup());
+        Optional<User> userOptional = userRepository.findById(request.getUser());
         if (customersOptional.isPresent()) {
             Customers customers = customersOptional.get();
             customers.setCustomerName(request.getCustomerName());
@@ -118,6 +121,7 @@ public class CustomersServiceImpl implements CustomersService {
             customers.setUpdateDate(new Timestamp(System.currentTimeMillis()));
             customers.setCustomerStatus(customerStatusOptional.get());
             customers.setCustomerGroup(customerGroupOptional.get());
+            customers.setUser(userOptional.get());
             return modelMapper.map(customersRepository.save(customers), CustomersDTO.class);
         }
         throw new RuntimeException("Có lỗi xảy ra trong quá trình cập nhật khách hàng");
@@ -165,6 +169,25 @@ public class CustomersServiceImpl implements CustomersService {
         Specification<Customers> specification = CustomCustomerRepository.filterSpecification(dateFrom, dateTo, request);
         Page<Customers> customersPage = customersRepository.findAll(specification, PageRequest.of(request.getStart(), request.getLimit()));
         return customersPage;
+    }
+
+    @Override
+    public void updateCustomerStatus(Long customerId, Long customerStatusId) {
+        Optional<Customers> optionalCustomers = customersRepository.findById(customerId);
+        Optional<CustomerStatus> customerStatusOptional = customerStatusRepository.findById(customerStatusId);
+        if (optionalCustomers.isPresent()) {
+            Customers customer = optionalCustomers.get();
+            // Cập nhật trạng thái của khách hàng
+            if(customerStatusOptional.isPresent()){
+                CustomerStatus status = customerStatusOptional.get();
+                customer.setCustomerStatus(status);
+                customersRepository.save(customer);
+            }else {
+                throw new RuntimeException("Không tìm thấy trạng thái khách hàng");
+            }
+        } else {
+            throw new RuntimeException("Không tìm thấy khách hàng");
+        }
     }
 
 }

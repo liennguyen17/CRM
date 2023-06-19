@@ -34,4 +34,11 @@ public interface UserService {
     List<CustomersDTO> getUserManagedCustomer();
 
     List<CustomersDTO> getUserManagedCustomers();
+
+    List<CustomersDTO> getUserManagedCustomersPageAdmin(Long id);
+
+    //thống kê user(là nhân viên) quản lý những nhóm nào hiển thị trong trang admin
+    List<CustomerGroupDTO> getUserManagedCustomerGroupsPageAdmin(Long id);
+
+
 }

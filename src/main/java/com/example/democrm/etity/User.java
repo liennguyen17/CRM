@@ -28,6 +28,9 @@ public class User {
     @Column(name = "user_name", length = 100)
     private String userName;
 
+    @Column(name= "name", length = 100)
+    private String name;
+
     @Column(name = "date")
     private Date date;
 

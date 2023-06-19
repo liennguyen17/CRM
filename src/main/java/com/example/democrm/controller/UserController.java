@@ -1,16 +1,14 @@
 package com.example.democrm.controller;
 
 import com.example.democrm.constant.DateTimeConstant;
-import com.example.democrm.constant.ErrorCodeDefs;
 import com.example.democrm.dto.CustomerGroupDTO;
 import com.example.democrm.dto.CustomersDTO;
 import com.example.democrm.dto.UserDTO;
 import com.example.democrm.etity.User;
 import com.example.democrm.request.user.CreateUserRequest;
 import com.example.democrm.request.user.FilterUserRequest;
+import com.example.democrm.request.user.ListUserManagerRequest;
 import com.example.democrm.request.user.UpdateUserRequest;
-import com.example.democrm.response.BaseListItemResponse;
-import com.example.democrm.response.BaseResponse;
 import com.example.democrm.service.UserService;
 import com.example.democrm.utils.MyUtils;
 import jakarta.validation.Valid;
@@ -18,7 +16,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -103,24 +100,58 @@ public class UserController extends BaseController {
         return buildListItemResponse(userDTOS, userPage.getTotalElements());
     }
 
-//    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    //trang admin
+    //Lấy danh sách khách hàng ứng với nhân viên trong trang admin
+    @GetMapping("/manager/customers")
+    ResponseEntity<?> getUserManagedCustomersPageAdmin(@RequestBody ListUserManagerRequest request){
+        List<CustomersDTO> customersDTOList = userService.getUserManagedCustomersPageAdmin(request.getUserId());
+        return buildListItemResponse(customersDTOList, customersDTOList.size());
+    }
+
+    @GetMapping("/manager/group")
+    ResponseEntity<?> getUserManagedCustomerGroupsPageAdmin(@RequestBody ListUserManagerRequest request) {
+        List<CustomerGroupDTO> customerGroupDTOs = userService.getUserManagedCustomerGroupsPageAdmin(request.getUserId());
+        return buildListItemResponse(customerGroupDTOs, customerGroupDTOs.size());
+    }
+
+    //Lấy danh sách khách hàng ứng với nhân viên trong trang admin
+    @GetMapping("/manager/customers/{id}")
+    ResponseEntity<?> getUserManagedCustomersPageAdmin(@PathVariable Long id){
+        List<CustomersDTO> customersDTOList = userService.getUserManagedCustomersPageAdmin(id);
+        return buildListItemResponse(customersDTOList, customersDTOList.size());
+    }
+
+    @GetMapping("/manager/group/{id}")
+    ResponseEntity<?> getUserManagedCustomerGroupsPageAdmin(@PathVariable Long id) {
+        List<CustomerGroupDTO> customerGroupDTOs = userService.getUserManagedCustomerGroupsPageAdmin(id);
+        return buildListItemResponse(customerGroupDTOs, customerGroupDTOs.size());
+    }
+
+
+
+    //trang Nhân viên
+    //thống kê user quản lý những nhóm nào
+    //@PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping("/manager-group")
     ResponseEntity<?> getUserManagedCustomerGroups() {
         List<CustomerGroupDTO> customerGroupDTOs = userService.getUserManagedCustomerGroups();
         return buildListItemResponse(customerGroupDTOs, customerGroupDTOs.size());
     }
 
+    //thống kê user quản lý số khách hàng thuộc nhóm đang quản lý
     @GetMapping("/manager-customer")
     ResponseEntity<?> getUserManagedCustomer(){
         List<CustomersDTO> customersDTOList = userService.getUserManagedCustomer();
         return buildListItemResponse(customersDTOList, customersDTOList.size());
     }
 
+    //thống kê nhân viên(user) quản lý khách hàng của nhân viên đó
     @GetMapping("/manager-customers")
     ResponseEntity<?> getUserManagedCustomers(){
         List<CustomersDTO> customersDTOList = userService.getUserManagedCustomers();
         return buildListItemResponse(customersDTOList, customersDTOList.size());
     }
+
 
 
 }

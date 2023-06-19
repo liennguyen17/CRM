@@ -17,6 +17,7 @@ public class UserDTO {
     private Long userId;
     private String userName;
 //    private String password;
+    private String name;
     @JsonFormat(pattern = DateTimeConstant.DATE_FORMAT, timezone = DateTimeConstant.TIME_ZONE)
     private Timestamp date;
     private String email;

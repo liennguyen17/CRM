@@ -19,6 +19,7 @@ public class FilterUserRequest {
     @DateValidateAnnotation(message = "DateOfBirthTo phải có định dạng dd/MM/yyyy")
     private String DateOfBirthTo;
     private String userName;
+    private String name;
     private String email;
     private String address;
     private Boolean isSuperAdmin;

@@ -28,4 +28,7 @@ public interface CustomersService {
     List<CustomersDTO> deleteList(List<Long> ids);
 
     Page<Customers> filterCustomer(FilterCustomerRequest request, Date dateFrom, Date dateTo);
+
+    //khach hang update trang thai qua email
+    void updateCustomerStatus(Long customerId, Long customerStatusId);
 }

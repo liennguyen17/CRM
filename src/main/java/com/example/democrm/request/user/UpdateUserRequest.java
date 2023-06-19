@@ -8,10 +8,15 @@ import lombok.Data;
 public class UpdateUserRequest {
     //    @NotNull(message = "Id không được để trống")
 //    private Long id;
+    @NotBlank(message = "User name nguời dùng không được để trống!")
+    @Size(min = 6, max = 100, message = "User name người dùng phải có ít nhất 6, nhiều nhất 100 kí tự!")
+//    @Pattern(regexp = "^([\\p{L}\\d_]+)$", message = "Tên người dùng không được chứa ký tự đặc biệt!")
+    private String userName;
+
     @NotBlank(message = "Tên nguời dùng không được để trống!")
     @Size(min = 6, max = 100, message = "Tên người dùng phải có ít nhất 6, nhiều nhất 100 kí tự!")
 //    @Pattern(regexp = "^([\\p{L}\\d_]+)$", message = "Tên người dùng không được chứa ký tự đặc biệt!")
-    private String userName;
+    private String name;
     @NotBlank(message = "Ngày sinh không được để trống!")
     @DateValidateAnnotation(message = "Định dạng ngày tháng phải là dd/MM/YYYY")
     private String date;

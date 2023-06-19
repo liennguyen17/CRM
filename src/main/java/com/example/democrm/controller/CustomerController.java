@@ -1,42 +1,41 @@
 package com.example.democrm.controller;
 
 import com.example.democrm.constant.DateTimeConstant;
-import com.example.democrm.constant.ErrorCodeDefs;
-import com.example.democrm.dto.CustomerStatusDTO;
 import com.example.democrm.dto.CustomersDTO;
 import com.example.democrm.etity.Customers;
 import com.example.democrm.request.customers.CreateCustomerRequest;
 import com.example.democrm.request.customers.FilterCustomerRequest;
 import com.example.democrm.request.customers.UpdateCustomerRequest;
-import com.example.democrm.response.BaseItemResponse;
-import com.example.democrm.response.BaseListItemResponse;
-import com.example.democrm.response.BaseResponse;
+import com.example.democrm.request.email.sendEmail;
 import com.example.democrm.service.CustomersService;
+import com.example.democrm.service.EmailService;
 import com.example.democrm.utils.MyUtils;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.apache.logging.log4j.util.Strings;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/customer")
 public class CustomerController extends BaseController {
     private final CustomersService customersService;
+    private final EmailService emailService;
+
     private final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
-    public CustomerController(CustomersService customersService) {
+    public CustomerController(CustomersService customersService, EmailService emailService) {
         this.customersService = customersService;
+        this.emailService = emailService;
     }
 
 
@@ -106,4 +105,19 @@ public class CustomerController extends BaseController {
         ).collect(Collectors.toList());
         return buildListItemResponse(customersDTOS, customersPage.getTotalElements());
     }
+
+    //khach hang bam trong email
+    @GetMapping("/customer/{customerID}/status/{statusID}/update")
+    public ResponseEntity<?> updateCustomerStatus(@PathVariable Long customerID, @PathVariable Long statusID){
+        customersService.updateCustomerStatus(customerID, statusID);
+        return ResponseEntity.ok("Trạng thái khách hàng đã được cập nhật!");
+    }
+
+//    @PostMapping("/send-request")
+//    public ResponseEntity<?> sendRequest(@Valid @RequestBody sendEmail request) throws MessagingException {
+//        emailService.sendEmailWithButtons(request);
+////        forgotPasswordService.sendMessage(request);
+//        String message = "Thành công";
+//        return buildItemResponse(message);
+//    }
 }

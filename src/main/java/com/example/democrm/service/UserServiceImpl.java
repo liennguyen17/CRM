@@ -84,6 +84,7 @@ public class UserServiceImpl implements UserService {
             Optional<Role> roleOptional = roleRepository.findById(request.getRoleId());
             User user = User.builder()
                     .userName(request.getUserName())
+                    .name(request.getName())
                     .date(MyUtils.convertDateFromString(request.getDate(), DateTimeConstant.DATE_FORMAT))
                     .email(request.getEmail())
                     .password(encoder.encode(request.getPassword()))
@@ -111,6 +112,7 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             user.setUserName(request.getUserName());
+            user.setName(request.getName());
             user.setDate(MyUtils.convertDateFromString(request.getDate(), DateTimeConstant.DATE_FORMAT));
             user.setEmail(request.getEmail());
             user.setPassword(encoder.encode(request.getPassword()));
@@ -155,6 +157,39 @@ public class UserServiceImpl implements UserService {
         return userPage;
     }
 
+    //trang admin
+    //Lấy danh sách khách hàng ứng với nhân viên trong trang admin
+    @Override
+    public List<CustomersDTO> getUserManagedCustomersPageAdmin(Long id) {
+        try{
+            List<Customers> customersList = customersRepository.findAllByUser_UserId(id);
+            List<CustomersDTO> customersDTOS = customersList.stream()
+                    .map(customers -> modelMapper.map(customers, CustomersDTO.class))
+                    .collect(Collectors.toList());
+            return customersDTOS;
+        }catch (Exception ex){
+            throw new RuntimeException("Không tìm thấy danh sách khách hàng của nhân viên có mã là: " +id+ " ");
+        }
+    }
+
+    //thống kê user(là nhân viên) quản lý những nhóm nào hiển thị trong trang admin
+    @Override
+    public List<CustomerGroupDTO> getUserManagedCustomerGroupsPageAdmin(Long id) {
+        try{
+            List<CustomerGroup> managedCustomerGroups = customerGroupRepository.getAllByUser_UserId(id);
+
+            List<CustomerGroupDTO> customerGroupDTOS = managedCustomerGroups.stream()
+                    .map(customerGroup -> modelMapper.map(customerGroup, CustomerGroupDTO.class))
+                    .collect(Collectors.toList());
+            return customerGroupDTOS;
+        }catch (Exception ex){
+            throw new RuntimeException("Không tìm thấy danh sách nhóm khách hàng của nhân viên có mã là: " +id+ " ");
+        }
+    }
+
+
+
+    //trang nhân viên
     //thống kê user quản lý những nhóm nào
     @Override
     public List<CustomerGroupDTO> getUserManagedCustomerGroups() {
@@ -224,11 +259,6 @@ public class UserServiceImpl implements UserService {
 
 
     }
-
-
-
-
-
 
 
     private void checkUserIsExistByName(String name, Long id) {

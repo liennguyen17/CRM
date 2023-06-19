@@ -27,4 +27,6 @@ public class CreateCustomerRequest {
     private Long status;
     @NotNull(message = "Id nhóm không được để trống!")
     private Long group;
+    @NotNull(message = "Id người quản lý không được để trống!")
+    private Long user;
 }

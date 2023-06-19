@@ -67,13 +67,18 @@ public class WebSecurityConfig {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/test/**").authenticated()
-                .requestMatchers("/customer/**").permitAll()
-                .requestMatchers("/user/**").permitAll()
-//                .requestMatchers("/user/manager-group").authenticated()
-//                .anyRequest().authenticated();
+                .requestMatchers("/auth/**").permitAll() //đăng nhập ko check token
+                .requestMatchers("/test/**").authenticated()    //check quyền , check token
+                //                .anyRequest().authenticated(); //nào phân quyền thì bật nó lên _ trừ cái đầu tiên ra thì bất kỳ api nào cũng đều phải check token thì mới có thể sử dụng được chức năng đó
 
+                //test thử .requestMatchers : dùng cho phiên bản cao cụ thể của mình là : 3.0.5
+//                .requestMatchers("/customer/**").permitAll()
+//                .requestMatchers("/user/**").permitAll()
+//                .requestMatchers("/user/manager-group").authenticated()
+
+
+                //test thử khi ko có token tất cả các api gọi đến các chức năng đều có thể sử dụng dc ko cần check token
+                //.antMatchers : tham số này dùng cho phiên bản spring thấp hơn
 //                .antMatchers("/auth/**").permitAll()
 //                .antMatchers("/test/**").authenticated()
                 .anyRequest().permitAll();  // tạm thời ko xét quyền để call thử, sau khi xong xét lại quyền như cũ  .anyRequest().authenticated();

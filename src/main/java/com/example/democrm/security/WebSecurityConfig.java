@@ -69,7 +69,7 @@ public class WebSecurityConfig {
                 .authorizeRequests()
                 .requestMatchers("/auth/**").permitAll() //đăng nhập ko check token
                 .requestMatchers("/test/**").authenticated()    //check quyền , check token
-                //                .anyRequest().authenticated(); //nào phân quyền thì bật nó lên _ trừ cái đầu tiên ra thì bất kỳ api nào cũng đều phải check token thì mới có thể sử dụng được chức năng đó
+                .anyRequest().authenticated(); //nào phân quyền thì bật nó lên _ trừ cái đầu tiên ra thì bất kỳ api nào cũng đều phải check token thì mới có thể sử dụng được chức năng đó
 
                 //test thử .requestMatchers : dùng cho phiên bản cao cụ thể của mình là : 3.0.5
 //                .requestMatchers("/customer/**").permitAll()
@@ -81,7 +81,7 @@ public class WebSecurityConfig {
                 //.antMatchers : tham số này dùng cho phiên bản spring thấp hơn
 //                .antMatchers("/auth/**").permitAll()
 //                .antMatchers("/test/**").authenticated()
-                .anyRequest().permitAll();  // tạm thời ko xét quyền để call thử, sau khi xong xét lại quyền như cũ  .anyRequest().authenticated();
+//                .anyRequest().permitAll();  // tạm thời ko xét quyền để call thử, sau khi xong xét lại quyền như cũ  .anyRequest().authenticated();
 
 
         http.authenticationProvider(authenticationProvider());

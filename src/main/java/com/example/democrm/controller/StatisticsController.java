@@ -6,10 +6,7 @@ import com.example.democrm.request.statistic.StatisticCustomerAndStaffRequest;
 import com.example.democrm.service.StatisticsService;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -83,7 +80,7 @@ public class StatisticsController extends BaseController {
     //thống kê chọn thời gian tự động
     //trang admin
     //thống kê tất cả các khách hàng theo trạng thái
-    @GetMapping("/customer/all-status")
+    @PostMapping("/customer/all-status")
     ResponseEntity<?> getCustomerStatusList(@RequestBody StatisticCustomerAndStaffRequest request) {
         try {
             List<StatisticsCustomerStatusDTO> response = statisticsService.getCustomerStatusList(request);
@@ -94,7 +91,7 @@ public class StatisticsController extends BaseController {
     }
 
     //thống kê mỗi nhân viên quản lý được bao nhiêu khách hàng có trạng thái thành công theo khoảng thời gian tự truyền
-    @GetMapping("/staff/status-success")
+    @PostMapping("/staff/status-success")
     ResponseEntity<?> getAllStatusSuccessCustomer_Staff(@RequestBody StatisticCustomerAndStaffRequest request) {
         try {
 //            List<StatisticsStaffDTO> response = statisticsService.getStatisticStaffByWeek();
@@ -106,7 +103,7 @@ public class StatisticsController extends BaseController {
     }
 
     //thống kê mỗi nhân viên quản lý được bao nhiêu khách hàng có trạng thái thành công theo khoảng thời gian tự truyền
-    @GetMapping("/staff/status-4")
+    @PostMapping("/staff/status-4")
     ResponseEntity<?> getAllStatus4Customer_Staff(@RequestBody StatisticCustomerAndStaffRequest request) {
         try {
 //            List<StatisticsStaffDTO> response = statisticsService.getStatisticStaffByWeek();
@@ -119,7 +116,7 @@ public class StatisticsController extends BaseController {
 
     //trang staff
     //thống kê tất cả các khách hàng theo trạng thái của tháng hiện tại ung voi nhan vien cu the
-    @GetMapping("/customerOf/staff1")
+    @PostMapping("/customerOf/staff1")
     ResponseEntity<?> getCustomerStatusListPageStaff(@RequestBody StatisticCustomerAndStaffRequest request) {
         try {
             List<StatisticsCustomerStatusDTO> response = statisticsService.getCustomerStatusListPageStaff(request);

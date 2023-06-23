@@ -16,6 +16,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,14 +53,14 @@ public class UserController extends BaseController {
     }
 
     @PostMapping("")
-//    @PreAuthorize("hasAnyAuthority('CREATE_USER','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('CREATE_USER','ADMIN')")
     ResponseEntity<?> creatUser(@Valid @RequestBody CreateUserRequest request) throws ParseException {
         UserDTO response = userService.createUser(request);
         return buildItemResponse(response);
     }
 
     @PutMapping("/{id}")
-//    @PreAuthorize("hasAnyAuthority('UPDATE_USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('UPDATE_USER', 'ADMIN')")
     ResponseEntity<?> update(@Validated @RequestBody UpdateUserRequest request,
                              @PathVariable("id") Long id) throws ParseException {
         UserDTO response = userService.update(request, id);
@@ -67,14 +68,14 @@ public class UserController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-//    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_USER')")
     ResponseEntity<?> deleteById(@PathVariable Long id) {
         UserDTO response = userService.deleteById(id);
         return buildItemResponse(response);
     }
 
     @DeleteMapping("/delete/all")
-//    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_USER')")
     ResponseEntity<?> deleteAllId(@RequestBody List<Long> ids) {
         try {
             List<UserDTO> response = userService.deleteAllId(ids);

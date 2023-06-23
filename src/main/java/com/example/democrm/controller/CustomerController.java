@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,7 +58,7 @@ public class CustomerController extends BaseController {
 
 
     @PostMapping("")
-//    @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_CUSTOMER','STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','CREATE_CUSTOMER','STAFF')")
     ResponseEntity<?> create(@Valid @RequestBody CreateCustomerRequest request) {
         CustomersDTO response = customersService.createCustomers(request);
         return buildItemResponse(response);
@@ -65,7 +66,7 @@ public class CustomerController extends BaseController {
 
 
     @PutMapping("/{id}")
-//    @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_CUSTOMER','STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','UPDATE_CUSTOMER','STAFF')")
     ResponseEntity<?> update(@Valid @RequestBody UpdateCustomerRequest request,
                              @PathVariable("id") Long id) {
         CustomersDTO response = customersService.updateCustomerById(request, id);
@@ -73,7 +74,7 @@ public class CustomerController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-//    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_CUSTOMER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_CUSTOMER','STAFF')")
     ResponseEntity<?> deleteById(@PathVariable Long id) {
         CustomersDTO response = customersService.deleteById(id);
         return buildItemResponse(response);
@@ -81,7 +82,7 @@ public class CustomerController extends BaseController {
 
 
     @DeleteMapping("/delete/all")
-//    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_CUSTOMER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DELETE_CUSTOMER','STAFF')")
     ResponseEntity<?> deleteAllId(@RequestBody List<Long> ids) {
         try {
             List<CustomersDTO> response = customersService.deleteList(ids);
